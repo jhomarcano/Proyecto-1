@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="co.edu.poli.sw2.controlador.DroneController"
+            prefHeight="600.0" prefWidth="1000.0">
+
+    <top>
+        <Label text="Gestion de Drones" BorderPane.alignment="CENTER">
+            <font><Font name="System Bold" size="22.0"/></font>
+            <padding><Insets top="15" right="15" bottom="10" left="15"/></padding>
+        </Label>
+    </top>
+
+    <left>
+        <VBox spacing="10" prefWidth="320.0">
+            <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
+
+            <Label text="Señal:"/>
+            <TextField fx:id="txtSenal" promptText="Ej: 2.4GHz"/>
+
+            <Label text="Modelo:"/>
+            <TextField fx:id="txtModelo" promptText="Ej: DJI Mavic 3"/>
+
+            <Label text="Fabricante:"/>
+            <TextField fx:id="txtFabricante" promptText="Ej: DJI"/>
+
+            <Label text="Peso (kg):"/>
+            <TextField fx:id="txtPeso" promptText="Ej: 0.9"/>
+
+            <Label text="Piloto asignado:"/>
+            <ComboBox fx:id="cbPiloto" prefWidth="290.0"/>
+
+            <Label text="Mision asignada:"/>
+            <ComboBox fx:id="cbMision" prefWidth="290.0"/>
+
+            <Label text="Sensores (Ctrl/Shift + clic para varios):"/>
+            <ListView fx:id="listSensores" prefHeight="100.0"/>
+
+            <HBox spacing="10">
+                <Button fx:id="btnAgregar" text="Agregar" onAction="#agregarDrone" prefWidth="130.0"/>
+                <Button fx:id="btnModificar" text="Modificar" onAction="#modificarDrone" prefWidth="130.0"/>
+            </HBox>
+            <HBox spacing="10">
+                <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarDrone" prefWidth="130.0"/>
+                <Button fx:id="btnLimpiar" text="Limpiar" onAction="#limpiarFormulario" prefWidth="130.0"/>
+            </HBox>
+
+            <Label fx:id="lblMensaje" wrapText="true" style="-fx-text-fill: #c0392b;"/>
+        </VBox>
+    </left>
+
+    <center>
+        <TableView fx:id="tablaDrones">
+            <columns>
+                <TableColumn fx:id="colId" text="ID" prefWidth="40.0"/>
+                <TableColumn fx:id="colSenal" text="Señal" prefWidth="80.0"/>
+                <TableColumn fx:id="colModelo" text="Modelo" prefWidth="120.0"/>
+                <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="100.0"/>
+                <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80.0"/>
+                <TableColumn fx:id="colPiloto" text="Piloto" prefWidth="140.0"/>
+                <TableColumn fx:id="colMision" text="Mision" prefWidth="150.0"/>
+                <TableColumn fx:id="colSensores" text="Sensores" prefWidth="180.0"/>
+            </columns>
+            <BorderPane.margin><Insets top="10" right="15" bottom="10" left="0"/></BorderPane.margin>
+        </TableView>
+    </center>
+
+</BorderPane>

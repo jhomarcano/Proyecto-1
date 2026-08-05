@@ -1,0 +1,217 @@
+package co.edu.poli.sw2.controlador;
+
+import co.edu.poli.sw2.dao.DatosQuemados;
+import co.edu.poli.sw2.dao.DroneDAO;
+import co.edu.poli.sw2.modelo.Drone;
+import co.edu.poli.sw2.modelo.Mision;
+import co.edu.poli.sw2.modelo.Piloto;
+import co.edu.poli.sw2.modelo.Sensor;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class DroneController implements Initializable {
+
+    // ---- Formulario ----
+    @FXML private TextField txtSenal;
+    @FXML private TextField txtModelo;
+    @FXML private TextField txtFabricante;
+    @FXML private TextField txtPeso;
+    @FXML private ComboBox<Piloto> cbPiloto;
+    @FXML private ComboBox<Mision> cbMision;
+    @FXML private ListView<Sensor> listSensores;
+    @FXML private Label lblMensaje;
+
+    // ---- Tabla ----
+    @FXML private TableView<Drone> tablaDrones;
+    @FXML private TableColumn<Drone, Integer> colId;
+    @FXML private TableColumn<Drone, String> colSenal;
+    @FXML private TableColumn<Drone, String> colModelo;
+    @FXML private TableColumn<Drone, String> colFabricante;
+    @FXML private TableColumn<Drone, Double> colPeso;
+    @FXML private TableColumn<Drone, String> colPiloto;
+    @FXML private TableColumn<Drone, String> colMision;
+    @FXML private TableColumn<Drone, String> colSensores;
+
+    // ---- DAO (unico con CRUD real) ----
+    private final DroneDAO droneDAO = new DroneDAO();
+
+    private Drone droneSeleccionado;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        configurarTabla();
+        cargarDatosQuemados();
+        cargarDatosEjemplo();
+
+        tablaDrones.getSelectionModel().selectedItemProperty().addListener((obs, viejo, nuevo) -> {
+            if (nuevo != null) {
+                droneSeleccionado = nuevo;
+                cargarFormulario(nuevo);
+            }
+        });
+    }
+
+    private void configurarTabla() {
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colSenal.setCellValueFactory(new PropertyValueFactory<>("senal"));
+        colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
+        colFabricante.setCellValueFactory(new PropertyValueFactory<>("fabricante"));
+        colPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
+
+        colPiloto.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getPilotoNombre()));
+        colMision.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getMisionNombre()));
+        colSensores.setCellValueFactory(data ->
+                new SimpleStringProperty(data.getValue().getSensoresTexto()));
+
+        tablaDrones.setItems(droneDAO.listar());
+    }
+
+    private void cargarDatosQuemados() {
+        cbPiloto.setItems(DatosQuemados.getPilotos());
+        cbMision.setItems(DatosQuemados.getMisiones());
+        listSensores.setItems(DatosQuemados.getSensores());
+        listSensores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
+
+    private void cargarDatosEjemplo() {
+        Drone d1 = new Drone(0, "2.4GHz", "DJI Mavic 3", "DJI", 0.9,
+                DatosQuemados.getPilotos().get(0), DatosQuemados.getMisiones().get(0));
+        d1.getSensores().add(DatosQuemados.getSensores().get(0));
+        d1.getSensores().add(DatosQuemados.getSensores().get(2));
+
+        Drone d2 = new Drone(0, "5.8GHz", "Autel EVO II", "Autel Robotics", 1.2,
+                DatosQuemados.getPilotos().get(1), DatosQuemados.getMisiones().get(1));
+        d2.getSensores().add(DatosQuemados.getSensores().get(1));
+
+        droneDAO.crear(d1);
+        droneDAO.crear(d2);
+    }
+
+    // -------------------- CRUD (delegado al DAO) --------------------
+
+    @FXML
+    private void agregarDrone() {
+        if (!validarFormulario()) return;
+
+        Drone nuevo = new Drone(
+                0,
+                txtSenal.getText().trim(),
+                txtModelo.getText().trim(),
+                txtFabricante.getText().trim(),
+                Double.parseDouble(txtPeso.getText().trim()),
+                cbPiloto.getValue(),
+                cbMision.getValue()
+        );
+        nuevo.getSensores().addAll(listSensores.getSelectionModel().getSelectedItems());
+
+        droneDAO.crear(nuevo);
+        limpiarFormulario();
+        mostrarMensaje("Drone agregado correctamente.", false);
+    }
+
+    @FXML
+    private void modificarDrone() {
+        if (droneSeleccionado == null) {
+            mostrarMensaje("Selecciona un drone de la tabla para modificar.", true);
+            return;
+        }
+        if (!validarFormulario()) return;
+
+        droneSeleccionado.setSenal(txtSenal.getText().trim());
+        droneSeleccionado.setModelo(txtModelo.getText().trim());
+        droneSeleccionado.setFabricante(txtFabricante.getText().trim());
+        droneSeleccionado.setPeso(Double.parseDouble(txtPeso.getText().trim()));
+        droneSeleccionado.setPiloto(cbPiloto.getValue());
+        droneSeleccionado.setMision(cbMision.getValue());
+        droneSeleccionado.setSensores(FXCollections.observableArrayList(
+                listSensores.getSelectionModel().getSelectedItems()));
+
+        droneDAO.actualizar(droneSeleccionado);
+        tablaDrones.refresh();
+        limpiarFormulario();
+        mostrarMensaje("Drone modificado correctamente.", false);
+    }
+
+    @FXML
+    private void eliminarDrone() {
+        Drone seleccionado = tablaDrones.getSelectionModel().getSelectedItem();
+        if (seleccionado == null) {
+            mostrarMensaje("Selecciona un drone de la tabla para eliminar.", true);
+            return;
+        }
+        droneDAO.eliminar(seleccionado);
+        limpiarFormulario();
+        mostrarMensaje("Drone eliminado correctamente.", false);
+    }
+
+    @FXML
+    private void limpiarFormulario() {
+        txtSenal.clear();
+        txtModelo.clear();
+        txtFabricante.clear();
+        txtPeso.clear();
+        cbPiloto.getSelectionModel().clearSelection();
+        cbMision.getSelectionModel().clearSelection();
+        listSensores.getSelectionModel().clearSelection();
+        tablaDrones.getSelectionModel().clearSelection();
+        droneSeleccionado = null;
+        lblMensaje.setText("");
+    }
+
+    // -------------------- Utilidades internas del controlador --------------------
+
+    private void cargarFormulario(Drone d) {
+        txtSenal.setText(d.getSenal());
+        txtModelo.setText(d.getModelo());
+        txtFabricante.setText(d.getFabricante());
+        txtPeso.setText(String.valueOf(d.getPeso()));
+        cbPiloto.setValue(d.getPiloto());
+        cbMision.setValue(d.getMision());
+
+        listSensores.getSelectionModel().clearSelection();
+        for (Sensor s : d.getSensores()) {
+            listSensores.getSelectionModel().select(s);
+        }
+    }
+
+    private boolean validarFormulario() {
+        if (txtSenal.getText().isBlank() || txtModelo.getText().isBlank()
+                || txtFabricante.getText().isBlank() || txtPeso.getText().isBlank()) {
+            mostrarMensaje("Todos los campos de texto son obligatorios.", true);
+            return false;
+        }
+        if (cbPiloto.getValue() == null) {
+            mostrarMensaje("Debes asignar un piloto (relacion 1 a 1).", true);
+            return false;
+        }
+        if (cbMision.getValue() == null) {
+            mostrarMensaje("Debes asignar una mision.", true);
+            return false;
+        }
+        try {
+            double peso = Double.parseDouble(txtPeso.getText().trim());
+            if (peso <= 0) {
+                mostrarMensaje("El peso debe ser un numero mayor que 0.", true);
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            mostrarMensaje("El peso debe ser un numero valido (ej: 0.9).", true);
+            return false;
+        }
+        return true;
+    }
+
+    private void mostrarMensaje(String texto, boolean esError) {
+        lblMensaje.setText(texto);
+        lblMensaje.setStyle(esError ? "-fx-text-fill: #c0392b;" : "-fx-text-fill: #27ae60;");
+    }
+}
