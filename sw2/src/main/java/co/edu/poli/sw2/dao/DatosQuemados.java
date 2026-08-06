@@ -1,5 +1,6 @@
 package co.edu.poli.sw2.dao;
 
+import co.edu.poli.sw2.modelo.Drone;
 import co.edu.poli.sw2.modelo.Mision;
 import co.edu.poli.sw2.modelo.Piloto;
 import co.edu.poli.sw2.modelo.Sensor;
@@ -8,8 +9,9 @@ import javafx.collections.ObservableList;
 
 /**
  * Piloto, Sensor y Mision no tienen CRUD en este ejercicio,
- * por eso se dejan como datos fijos (quemados) en memoria,
- * disponibles para relacionarlos con Drone.
+ * por eso se dejan como datos fijos (quemados) en memoria.
+ * Drone si tiene CRUD, pero por simplicidad tambien se maneja
+ * aqui en memoria (sin DAO) mientras el ejercicio lo permita.
  */
 public class DatosQuemados {
 
@@ -32,7 +34,22 @@ public class DatosQuemados {
             new Mision(3, "Vigilancia forestal", "Cauca", "2026-08-20")
     );
 
+    // ---- Drones: unica entidad con CRUD, pero sin DAO por ahora ----
+    private static final ObservableList<Drone> DRONES = FXCollections.observableArrayList();
+    private static int contadorDroneId = 1;
+
     public static ObservableList<Piloto> getPilotos() { return PILOTOS; }
     public static ObservableList<Sensor> getSensores() { return SENSORES; }
     public static ObservableList<Mision> getMisiones() { return MISIONES; }
+    public static ObservableList<Drone> getDrones() { return DRONES; }
+
+    public static Drone crearDrone(Drone drone) {
+        drone.setId(contadorDroneId++);
+        DRONES.add(drone);
+        return drone;
+    }
+
+    public static void eliminarDrone(Drone drone) {
+        DRONES.remove(drone);
+    }
 }
