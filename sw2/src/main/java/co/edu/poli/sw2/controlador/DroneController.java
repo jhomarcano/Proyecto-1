@@ -18,8 +18,7 @@ import java.util.ResourceBundle;
 public class DroneController implements Initializable {
 
     // ---- Formulario ----
-    @FXML private TextField txtSenal;
-    @FXML private TextField txtModelo;
+    @FXML private TextField txtSerial;
     @FXML private TextField txtFabricante;
     @FXML private TextField txtPeso;
     @FXML private ComboBox<Piloto> cbPiloto;
@@ -30,8 +29,7 @@ public class DroneController implements Initializable {
     // ---- Tabla ----
     @FXML private TableView<Drone> tablaDrones;
     @FXML private TableColumn<Drone, Integer> colId;
-    @FXML private TableColumn<Drone, String> colSenal;
-    @FXML private TableColumn<Drone, String> colModelo;
+    @FXML private TableColumn<Drone, String> colSerial;
     @FXML private TableColumn<Drone, String> colFabricante;
     @FXML private TableColumn<Drone, Double> colPeso;
     @FXML private TableColumn<Drone, String> colPiloto;
@@ -56,8 +54,7 @@ public class DroneController implements Initializable {
 
     private void configurarTabla() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colSenal.setCellValueFactory(new PropertyValueFactory<>("senal"));
-        colModelo.setCellValueFactory(new PropertyValueFactory<>("modelo"));
+        colSerial.setCellValueFactory(new PropertyValueFactory<>("serial"));
         colFabricante.setCellValueFactory(new PropertyValueFactory<>("fabricante"));
         colPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
 
@@ -81,12 +78,12 @@ public class DroneController implements Initializable {
     private void cargarDatosEjemplo() {
         if (!DatosQuemados.getDrones().isEmpty()) return; // evita duplicar si se recarga la vista
 
-        Drone d1 = new Drone(0, "2.4GHz", "DJI Mavic 3", "DJI", 0.9,
+        Drone d1 = new Drone(0, "SN-00123", "DJI", 0.9,
                 DatosQuemados.getPilotos().get(0), DatosQuemados.getMisiones().get(0));
         d1.getSensores().add(DatosQuemados.getSensores().get(0));
         d1.getSensores().add(DatosQuemados.getSensores().get(2));
 
-        Drone d2 = new Drone(0, "5.8GHz", "Autel EVO II", "Autel Robotics", 1.2,
+        Drone d2 = new Drone(0, "SN-00456", "Autel Robotics", 1.2,
                 DatosQuemados.getPilotos().get(1), DatosQuemados.getMisiones().get(1));
         d2.getSensores().add(DatosQuemados.getSensores().get(1));
 
@@ -102,8 +99,7 @@ public class DroneController implements Initializable {
 
         Drone nuevo = new Drone(
                 0,
-                txtSenal.getText().trim(),
-                txtModelo.getText().trim(),
+                txtSerial.getText().trim(),
                 txtFabricante.getText().trim(),
                 Double.parseDouble(txtPeso.getText().trim()),
                 cbPiloto.getValue(),
@@ -124,8 +120,7 @@ public class DroneController implements Initializable {
         }
         if (!validarFormulario()) return;
 
-        droneSeleccionado.setSenal(txtSenal.getText().trim());
-        droneSeleccionado.setModelo(txtModelo.getText().trim());
+        droneSeleccionado.setSerial(txtSerial.getText().trim());
         droneSeleccionado.setFabricante(txtFabricante.getText().trim());
         droneSeleccionado.setPeso(Double.parseDouble(txtPeso.getText().trim()));
         droneSeleccionado.setPiloto(cbPiloto.getValue());
@@ -152,8 +147,7 @@ public class DroneController implements Initializable {
 
     @FXML
     private void limpiarFormulario() {
-        txtSenal.clear();
-        txtModelo.clear();
+        txtSerial.clear();
         txtFabricante.clear();
         txtPeso.clear();
         cbPiloto.getSelectionModel().clearSelection();
@@ -167,8 +161,7 @@ public class DroneController implements Initializable {
     // -------------------- Utilidades internas del controlador --------------------
 
     private void cargarFormulario(Drone d) {
-        txtSenal.setText(d.getSenal());
-        txtModelo.setText(d.getModelo());
+        txtSerial.setText(d.getSerial());
         txtFabricante.setText(d.getFabricante());
         txtPeso.setText(String.valueOf(d.getPeso()));
         cbPiloto.setValue(d.getPiloto());
@@ -181,7 +174,7 @@ public class DroneController implements Initializable {
     }
 
     private boolean validarFormulario() {
-        if (txtSenal.getText().isBlank() || txtModelo.getText().isBlank()
+        if (txtSerial.getText().isBlank()
                 || txtFabricante.getText().isBlank() || txtPeso.getText().isBlank()) {
             mostrarMensaje("Todos los campos de texto son obligatorios.", true);
             return false;

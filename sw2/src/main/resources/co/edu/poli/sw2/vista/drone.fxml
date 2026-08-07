@@ -21,11 +21,8 @@
         <VBox spacing="10" prefWidth="320.0">
             <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
 
-            <Label text="Señal:"/>
-            <TextField fx:id="txtSenal" promptText="Ej: 2.4GHz"/>
-
-            <Label text="Modelo:"/>
-            <TextField fx:id="txtModelo" promptText="Ej: DJI Mavic 3"/>
+            <Label text="Serial:"/>
+            <TextField fx:id="txtSerial" promptText="Ej: SN-00123"/>
 
             <Label text="Fabricante:"/>
             <TextField fx:id="txtFabricante" promptText="Ej: DJI"/>
@@ -59,9 +56,8 @@
         <TableView fx:id="tablaDrones">
             <columns>
                 <TableColumn fx:id="colId" text="ID" prefWidth="40.0"/>
-                <TableColumn fx:id="colSenal" text="Señal" prefWidth="80.0"/>
-                <TableColumn fx:id="colModelo" text="Modelo" prefWidth="120.0"/>
-                <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="100.0"/>
+                <TableColumn fx:id="colSerial" text="Serial" prefWidth="100.0"/>
+                <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="120.0"/>
                 <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80.0"/>
                 <TableColumn fx:id="colPiloto" text="Piloto" prefWidth="140.0"/>
                 <TableColumn fx:id="colMision" text="Mision" prefWidth="150.0"/>

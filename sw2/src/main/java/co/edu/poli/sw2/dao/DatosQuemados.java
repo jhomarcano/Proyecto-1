@@ -16,9 +16,9 @@ import javafx.collections.ObservableList;
 public class DatosQuemados {
 
     private static final ObservableList<Piloto> PILOTOS = FXCollections.observableArrayList(
-            new Piloto(1, "Carlos Ramirez", "Avanzado", "3001112233"),
-            new Piloto(2, "Laura Gomez", "Intermedio", "3002223344"),
-            new Piloto(3, "Andres Torres", "Basico", "3003334455")
+            new Piloto(1, "Carlos Ramirez", 10, "3001112233"),
+            new Piloto(2, "Laura Gomez", 5, "3002223344"),
+            new Piloto(3, "Andres Torres", 1, "3003334455")
     );
 
     private static final ObservableList<Sensor> SENSORES = FXCollections.observableArrayList(

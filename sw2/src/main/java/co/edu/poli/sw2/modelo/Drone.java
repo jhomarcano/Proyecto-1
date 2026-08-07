@@ -7,8 +7,7 @@ import javafx.collections.ObservableList;
 public class Drone {
 
     private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty senal = new SimpleStringProperty();
-    private final StringProperty modelo = new SimpleStringProperty();
+    private final StringProperty serial = new SimpleStringProperty();
     private final StringProperty fabricante = new SimpleStringProperty();
     private final DoubleProperty peso = new SimpleDoubleProperty();
 
@@ -21,11 +20,10 @@ public class Drone {
     // Relacion muchos a muchos: un dron puede tener varios sensores
     private final ObservableList<Sensor> sensores = FXCollections.observableArrayList();
 
-    public Drone(int id, String senal, String modelo, String fabricante, double peso,
+    public Drone(int id, String serial, String fabricante, double peso,
                  Piloto piloto, Mision mision) {
         this.id.set(id);
-        this.senal.set(senal);
-        this.modelo.set(modelo);
+        this.serial.set(serial);
         this.fabricante.set(fabricante);
         this.peso.set(peso);
         this.piloto.set(piloto);
@@ -34,8 +32,7 @@ public class Drone {
 
     // ---- Propiedades (para PropertyValueFactory de la TableView) ----
     public IntegerProperty idProperty() { return id; }
-    public StringProperty senalProperty() { return senal; }
-    public StringProperty modeloProperty() { return modelo; }
+    public StringProperty serialProperty() { return serial; }
     public StringProperty fabricanteProperty() { return fabricante; }
     public DoubleProperty pesoProperty() { return peso; }
     public ObjectProperty<Piloto> pilotoProperty() { return piloto; }
@@ -45,11 +42,8 @@ public class Drone {
     public int getId() { return id.get(); }
     public void setId(int id) { this.id.set(id); }
 
-    public String getSenal() { return senal.get(); }
-    public void setSenal(String senal) { this.senal.set(senal); }
-
-    public String getModelo() { return modelo.get(); }
-    public void setModelo(String modelo) { this.modelo.set(modelo); }
+    public String getSerial() { return serial.get(); }
+    public void setSerial(String serial) { this.serial.set(serial); }
 
     public String getFabricante() { return fabricante.get(); }
     public void setFabricante(String fabricante) { this.fabricante.set(fabricante); }
