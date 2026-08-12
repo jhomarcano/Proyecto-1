@@ -15,6 +15,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class DroneController implements Initializable {
 
     // ---- Formulario ----
@@ -34,7 +38,7 @@ public class DroneController implements Initializable {
     @FXML private TableColumn<Drone, String> colPiloto;
     @FXML private TableColumn<Drone, String> colSensores;
 
-    private final DroneDAOImpl droneDAO = new DroneDAOImpl();
+    private final DroneDAO droneDAO = new DroneDAOImpl();
     private Drone droneSeleccionado;
 
     @Override
@@ -64,11 +68,35 @@ public class DroneController implements Initializable {
     }
 
     private void cargarCatalogos() {
-        cbPiloto.setItems(FXCollections.observableArrayList(droneDAO.obtenerPilotos()));
-        listSensores.setItems(FXCollections.observableArrayList(droneDAO.obtenerSensores()));
+        cbPiloto.setItems(FXCollections.observableArrayList(crearPilotos()));
+        listSensores.setItems(FXCollections.observableArrayList(crearSensores()));
         listSensores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
+    /**
+     * Catalogo fijo de pilotos. Vive aqui porque el DAO
+     * solo se encarga de persistir Drones.
+     */
+    private List<Piloto> crearPilotos() {
+        List<Piloto> lista = new ArrayList<>();
+        lista.add(new Piloto(1, "Carlos Ramirez", 10, "3001112233"));
+        lista.add(new Piloto(2, "Laura Gomez", 5, "3002223344"));
+        lista.add(new Piloto(3, "Andres Torres", 1, "3003334455"));
+        return lista;
+    }
+
+    /**
+     * Catalogo fijo de sensores. Igual que pilotos: no vive en el DAO.
+     */
+    private List<Sensor> crearSensores() {
+        List<Sensor> lista = new ArrayList<>();
+        lista.add(new Sensor(1, "Camara termica", "FLIR"));
+        lista.add(new Sensor(2, "LIDAR", "Velodyne"));
+        lista.add(new Sensor(3, "GPS RTK", "u-blox"));
+        lista.add(new Sensor(4, "Sensor multiespectral", "MicaSense"));
+        return lista;
+    }
+    
     private void refrescarTabla() {
         tablaDrones.setItems(FXCollections.observableArrayList(droneDAO.listar()));
     }
