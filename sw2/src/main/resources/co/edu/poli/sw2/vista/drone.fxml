@@ -33,9 +33,6 @@
             <Label text="Piloto asignado:"/>
             <ComboBox fx:id="cbPiloto" prefWidth="290.0"/>
 
-            <Label text="Mision asignada:"/>
-            <ComboBox fx:id="cbMision" prefWidth="290.0"/>
-
             <Label text="Sensores (Ctrl/Shift + clic para varios):"/>
             <ListView fx:id="listSensores" prefHeight="100.0"/>
 
@@ -60,8 +57,7 @@
                 <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="120.0"/>
                 <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80.0"/>
                 <TableColumn fx:id="colPiloto" text="Piloto" prefWidth="140.0"/>
-                <TableColumn fx:id="colMision" text="Mision" prefWidth="150.0"/>
-                <TableColumn fx:id="colSensores" text="Sensores" prefWidth="180.0"/>
+                <TableColumn fx:id="colSensores" text="Sensores" prefWidth="220.0"/>
             </columns>
             <BorderPane.margin><Insets top="10" right="15" bottom="10" left="0"/></BorderPane.margin>
         </TableView>

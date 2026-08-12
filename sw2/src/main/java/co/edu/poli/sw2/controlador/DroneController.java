@@ -2,11 +2,9 @@ package co.edu.poli.sw2.controlador;
 
 import co.edu.poli.sw2.dao.DatosQuemados;
 import co.edu.poli.sw2.modelo.Drone;
-import co.edu.poli.sw2.modelo.Mision;
 import co.edu.poli.sw2.modelo.Piloto;
 import co.edu.poli.sw2.modelo.Sensor;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -22,7 +20,6 @@ public class DroneController implements Initializable {
     @FXML private TextField txtFabricante;
     @FXML private TextField txtPeso;
     @FXML private ComboBox<Piloto> cbPiloto;
-    @FXML private ComboBox<Mision> cbMision;
     @FXML private ListView<Sensor> listSensores;
     @FXML private Label lblMensaje;
 
@@ -33,7 +30,6 @@ public class DroneController implements Initializable {
     @FXML private TableColumn<Drone, String> colFabricante;
     @FXML private TableColumn<Drone, Double> colPeso;
     @FXML private TableColumn<Drone, String> colPiloto;
-    @FXML private TableColumn<Drone, String> colMision;
     @FXML private TableColumn<Drone, String> colSensores;
 
     private Drone droneSeleccionado;
@@ -60,8 +56,6 @@ public class DroneController implements Initializable {
 
         colPiloto.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getPilotoNombre()));
-        colMision.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getMisionNombre()));
         colSensores.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getSensoresTexto()));
 
@@ -70,7 +64,6 @@ public class DroneController implements Initializable {
 
     private void cargarDatosQuemados() {
         cbPiloto.setItems(DatosQuemados.getPilotos());
-        cbMision.setItems(DatosQuemados.getMisiones());
         listSensores.setItems(DatosQuemados.getSensores());
         listSensores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
@@ -79,12 +72,12 @@ public class DroneController implements Initializable {
         if (!DatosQuemados.getDrones().isEmpty()) return; // evita duplicar si se recarga la vista
 
         Drone d1 = new Drone(0, "SN-00123", "DJI", 0.9,
-                DatosQuemados.getPilotos().get(0), DatosQuemados.getMisiones().get(0));
+                DatosQuemados.getPilotos().get(0));
         d1.getSensores().add(DatosQuemados.getSensores().get(0));
         d1.getSensores().add(DatosQuemados.getSensores().get(2));
 
         Drone d2 = new Drone(0, "SN-00456", "Autel Robotics", 1.2,
-                DatosQuemados.getPilotos().get(1), DatosQuemados.getMisiones().get(1));
+                DatosQuemados.getPilotos().get(1));
         d2.getSensores().add(DatosQuemados.getSensores().get(1));
 
         DatosQuemados.crearDrone(d1);
@@ -102,8 +95,7 @@ public class DroneController implements Initializable {
                 txtSerial.getText().trim(),
                 txtFabricante.getText().trim(),
                 Double.parseDouble(txtPeso.getText().trim()),
-                cbPiloto.getValue(),
-                cbMision.getValue()
+                cbPiloto.getValue()
         );
         nuevo.getSensores().addAll(listSensores.getSelectionModel().getSelectedItems());
 
@@ -120,13 +112,14 @@ public class DroneController implements Initializable {
         }
         if (!validarFormulario()) return;
 
-        droneSeleccionado.setSerial(txtSerial.getText().trim());
-        droneSeleccionado.setFabricante(txtFabricante.getText().trim());
-        droneSeleccionado.setPeso(Double.parseDouble(txtPeso.getText().trim()));
-        droneSeleccionado.setPiloto(cbPiloto.getValue());
-        droneSeleccionado.setMision(cbMision.getValue());
-        droneSeleccionado.setSensores(FXCollections.observableArrayList(
-                listSensores.getSelectionModel().getSelectedItems()));
+        DatosQuemados.actualizarDrone(
+                droneSeleccionado,
+                txtSerial.getText().trim(),
+                txtFabricante.getText().trim(),
+                Double.parseDouble(txtPeso.getText().trim()),
+                cbPiloto.getValue(),
+                listSensores.getSelectionModel().getSelectedItems()
+        );
 
         tablaDrones.refresh();
         limpiarFormulario();
@@ -151,7 +144,6 @@ public class DroneController implements Initializable {
         txtFabricante.clear();
         txtPeso.clear();
         cbPiloto.getSelectionModel().clearSelection();
-        cbMision.getSelectionModel().clearSelection();
         listSensores.getSelectionModel().clearSelection();
         tablaDrones.getSelectionModel().clearSelection();
         droneSeleccionado = null;
@@ -165,7 +157,6 @@ public class DroneController implements Initializable {
         txtFabricante.setText(d.getFabricante());
         txtPeso.setText(String.valueOf(d.getPeso()));
         cbPiloto.setValue(d.getPiloto());
-        cbMision.setValue(d.getMision());
 
         listSensores.getSelectionModel().clearSelection();
         for (Sensor s : d.getSensores()) {
@@ -181,10 +172,6 @@ public class DroneController implements Initializable {
         }
         if (cbPiloto.getValue() == null) {
             mostrarMensaje("Debes asignar un piloto (relacion 1 a 1).", true);
-            return false;
-        }
-        if (cbMision.getValue() == null) {
-            mostrarMensaje("Debes asignar una mision.", true);
             return false;
         }
         try {

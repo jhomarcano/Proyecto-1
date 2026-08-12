@@ -1,73 +1,52 @@
 package co.edu.poli.sw2.modelo;
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Drone {
 
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty serial = new SimpleStringProperty();
-    private final StringProperty fabricante = new SimpleStringProperty();
-    private final DoubleProperty peso = new SimpleDoubleProperty();
+    private int id;
+    private String serial;
+    private String fabricante;
+    private double peso;
 
     // Relacion 1 a 1: un dron tiene un unico piloto
-    private final ObjectProperty<Piloto> piloto = new SimpleObjectProperty<>();
-
-    // Relacion 1 a muchos: un dron pertenece a una mision (una mision -> muchos drones)
-    private final ObjectProperty<Mision> mision = new SimpleObjectProperty<>();
+    private Piloto piloto;
 
     // Relacion muchos a muchos: un dron puede tener varios sensores
-    private final ObservableList<Sensor> sensores = FXCollections.observableArrayList();
+    private List<Sensor> sensores = new ArrayList<>();
 
-    public Drone(int id, String serial, String fabricante, double peso,
-                 Piloto piloto, Mision mision) {
-        this.id.set(id);
-        this.serial.set(serial);
-        this.fabricante.set(fabricante);
-        this.peso.set(peso);
-        this.piloto.set(piloto);
-        this.mision.set(mision);
+    public Drone(int id, String serial, String fabricante, double peso, Piloto piloto) {
+        this.id = id;
+        this.serial = serial;
+        this.fabricante = fabricante;
+        this.peso = peso;
+        this.piloto = piloto;
     }
 
-    // ---- Propiedades (para PropertyValueFactory de la TableView) ----
-    public IntegerProperty idProperty() { return id; }
-    public StringProperty serialProperty() { return serial; }
-    public StringProperty fabricanteProperty() { return fabricante; }
-    public DoubleProperty pesoProperty() { return peso; }
-    public ObjectProperty<Piloto> pilotoProperty() { return piloto; }
-    public ObjectProperty<Mision> misionProperty() { return mision; }
-
     // ---- Getters / Setters normales ----
-    public int getId() { return id.get(); }
-    public void setId(int id) { this.id.set(id); }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public String getSerial() { return serial.get(); }
-    public void setSerial(String serial) { this.serial.set(serial); }
+    public String getSerial() { return serial; }
+    public void setSerial(String serial) { this.serial = serial; }
 
-    public String getFabricante() { return fabricante.get(); }
-    public void setFabricante(String fabricante) { this.fabricante.set(fabricante); }
+    public String getFabricante() { return fabricante; }
+    public void setFabricante(String fabricante) { this.fabricante = fabricante; }
 
-    public double getPeso() { return peso.get(); }
-    public void setPeso(double peso) { this.peso.set(peso); }
+    public double getPeso() { return peso; }
+    public void setPeso(double peso) { this.peso = peso; }
 
-    public Piloto getPiloto() { return piloto.get(); }
-    public void setPiloto(Piloto piloto) { this.piloto.set(piloto); }
+    public Piloto getPiloto() { return piloto; }
+    public void setPiloto(Piloto piloto) { this.piloto = piloto; }
 
-    public Mision getMision() { return mision.get(); }
-    public void setMision(Mision mision) { this.mision.set(mision); }
-
-    public ObservableList<Sensor> getSensores() { return sensores; }
-    public void setSensores(ObservableList<Sensor> nuevos) {
-        sensores.setAll(nuevos);
+    public List<Sensor> getSensores() { return sensores; }
+    public void setSensores(List<Sensor> nuevos) {
+        this.sensores = new ArrayList<>(nuevos);
     }
 
     public String getPilotoNombre() {
-        return piloto.get() != null ? piloto.get().getNombre() : "Sin asignar";
-    }
-
-    public String getMisionNombre() {
-        return mision.get() != null ? mision.get().getNombre() : "Sin asignar";
+        return piloto != null ? piloto.getNombre() : "Sin asignar";
     }
 
     public String getSensoresTexto() {

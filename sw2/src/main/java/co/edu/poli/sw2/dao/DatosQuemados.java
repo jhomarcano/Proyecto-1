@@ -7,11 +7,17 @@ import co.edu.poli.sw2.modelo.Sensor;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.List;
+
 /**
  * Piloto, Sensor y Mision no tienen CRUD en este ejercicio,
  * por eso se dejan como datos fijos (quemados) en memoria.
  * Drone si tiene CRUD, pero por simplicidad tambien se maneja
- * aqui en memoria (sin DAO) mientras el ejercicio lo permita.
+ * aqui en memoria (sin DAO separado) mientras el ejercicio lo permita.
+ *
+ * Nota: Mision NO se relaciona dentro del CRUD de Drone, porque la
+ * relacion correcta es Mision -> Drones (una mision tiene varios
+ * drones asignados), no un drone con una mision propia.
  */
 public class DatosQuemados {
 
@@ -34,7 +40,7 @@ public class DatosQuemados {
             new Mision(3, "Vigilancia forestal", "Cauca", "2026-08-20")
     );
 
-    // ---- Drones: unica entidad con CRUD, pero sin DAO por ahora ----
+    // ---- Drones: unica entidad con CRUD, pero sin DAO separado por ahora ----
     private static final ObservableList<Drone> DRONES = FXCollections.observableArrayList();
     private static int contadorDroneId = 1;
 
@@ -51,5 +57,18 @@ public class DatosQuemados {
 
     public static void eliminarDrone(Drone drone) {
         DRONES.remove(drone);
+    }
+
+    /**
+     * Actualiza los datos de un drone existente.
+     */
+    public static void actualizarDrone(Drone drone, String serial, String fabricante,
+                                        double peso, Piloto piloto,
+                                        List<Sensor> sensores) {
+        drone.setSerial(serial);
+        drone.setFabricante(fabricante);
+        drone.setPeso(peso);
+        drone.setPiloto(piloto);
+        drone.setSensores(sensores);
     }
 }
