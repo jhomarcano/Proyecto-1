@@ -1,10 +1,12 @@
 package co.edu.poli.sw2.controlador;
 
-import co.edu.poli.sw2.dao.DatosQuemados;
+import co.edu.poli.sw2.dao.DroneDAO;
+import co.edu.poli.sw2.dao.DroneDAOImpl;
 import co.edu.poli.sw2.modelo.Drone;
 import co.edu.poli.sw2.modelo.Piloto;
 import co.edu.poli.sw2.modelo.Sensor;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -32,13 +34,14 @@ public class DroneController implements Initializable {
     @FXML private TableColumn<Drone, String> colPiloto;
     @FXML private TableColumn<Drone, String> colSensores;
 
+    private final DroneDAO droneDAO = new DroneDAOImpl();
     private Drone droneSeleccionado;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configurarTabla();
-        cargarDatosQuemados();
-        cargarDatosEjemplo();
+        cargarCatalogos();
+        refrescarTabla();
 
         tablaDrones.getSelectionModel().selectedItemProperty().addListener((obs, viejo, nuevo) -> {
             if (nuevo != null) {
@@ -58,33 +61,19 @@ public class DroneController implements Initializable {
                 new SimpleStringProperty(data.getValue().getPilotoNombre()));
         colSensores.setCellValueFactory(data ->
                 new SimpleStringProperty(data.getValue().getSensoresTexto()));
-
-        tablaDrones.setItems(DatosQuemados.getDrones());
     }
 
-    private void cargarDatosQuemados() {
-        cbPiloto.setItems(DatosQuemados.getPilotos());
-        listSensores.setItems(DatosQuemados.getSensores());
+    private void cargarCatalogos() {
+        cbPiloto.setItems(FXCollections.observableArrayList(droneDAO.listarPilotos()));
+        listSensores.setItems(FXCollections.observableArrayList(droneDAO.listarSensores()));
         listSensores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
-    private void cargarDatosEjemplo() {
-        if (!DatosQuemados.getDrones().isEmpty()) return; // evita duplicar si se recarga la vista
-
-        Drone d1 = new Drone(0, "SN-00123", "DJI", 0.9,
-                DatosQuemados.getPilotos().get(0));
-        d1.getSensores().add(DatosQuemados.getSensores().get(0));
-        d1.getSensores().add(DatosQuemados.getSensores().get(2));
-
-        Drone d2 = new Drone(0, "SN-00456", "Autel Robotics", 1.2,
-                DatosQuemados.getPilotos().get(1));
-        d2.getSensores().add(DatosQuemados.getSensores().get(1));
-
-        DatosQuemados.crearDrone(d1);
-        DatosQuemados.crearDrone(d2);
+    private void refrescarTabla() {
+        tablaDrones.setItems(FXCollections.observableArrayList(droneDAO.listarDrones()));
     }
 
-    // -------------------- CRUD (contra DatosQuemados) --------------------
+    // -------------------- CRUD (contra DroneDAO) --------------------
 
     @FXML
     private void agregarDrone() {
@@ -99,7 +88,8 @@ public class DroneController implements Initializable {
         );
         nuevo.getSensores().addAll(listSensores.getSelectionModel().getSelectedItems());
 
-        DatosQuemados.crearDrone(nuevo);
+        droneDAO.crear(nuevo);
+        refrescarTabla();
         limpiarFormulario();
         mostrarMensaje("Drone agregado correctamente.", false);
     }
@@ -112,7 +102,7 @@ public class DroneController implements Initializable {
         }
         if (!validarFormulario()) return;
 
-        DatosQuemados.actualizarDrone(
+        droneDAO.actualizar(
                 droneSeleccionado,
                 txtSerial.getText().trim(),
                 txtFabricante.getText().trim(),
@@ -121,7 +111,7 @@ public class DroneController implements Initializable {
                 listSensores.getSelectionModel().getSelectedItems()
         );
 
-        tablaDrones.refresh();
+        refrescarTabla();
         limpiarFormulario();
         mostrarMensaje("Drone modificado correctamente.", false);
     }
@@ -133,7 +123,8 @@ public class DroneController implements Initializable {
             mostrarMensaje("Selecciona un drone de la tabla para eliminar.", true);
             return;
         }
-        DatosQuemados.eliminarDrone(seleccionado);
+        droneDAO.eliminar(seleccionado);
+        refrescarTabla();
         limpiarFormulario();
         mostrarMensaje("Drone eliminado correctamente.", false);
     }

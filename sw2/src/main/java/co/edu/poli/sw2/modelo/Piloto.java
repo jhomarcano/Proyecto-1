@@ -1,7 +1,9 @@
 package co.edu.poli.sw2.modelo;
+import java.io.Serializable;
 
-public class Piloto {
-
+public class Piloto implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private int id;
     private String nombre;
     private int experiencia;

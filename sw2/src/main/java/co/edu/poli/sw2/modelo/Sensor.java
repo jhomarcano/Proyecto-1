@@ -1,7 +1,9 @@
 package co.edu.poli.sw2.modelo;
+import java.io.Serializable;
 
-public class Sensor {
-
+public class Sensor implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private int id;
     private String tipo;
     private String fabricante;

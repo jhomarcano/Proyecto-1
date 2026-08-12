@@ -2,9 +2,11 @@ package co.edu.poli.sw2.modelo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 
-public class Drone {
-
+public class Drone implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private int id;
     private String serial;
     private String fabricante;
