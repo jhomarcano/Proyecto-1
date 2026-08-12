@@ -34,7 +34,7 @@ public class DroneController implements Initializable {
     @FXML private TableColumn<Drone, String> colPiloto;
     @FXML private TableColumn<Drone, String> colSensores;
 
-    private final DroneDAO droneDAO = new DroneDAOImpl();
+    private final DroneDAOImpl droneDAO = new DroneDAOImpl();
     private Drone droneSeleccionado;
 
     @Override
@@ -64,15 +64,14 @@ public class DroneController implements Initializable {
     }
 
     private void cargarCatalogos() {
-        cbPiloto.setItems(FXCollections.observableArrayList(droneDAO.listarPilotos()));
-        listSensores.setItems(FXCollections.observableArrayList(droneDAO.listarSensores()));
+        cbPiloto.setItems(FXCollections.observableArrayList(droneDAO.obtenerPilotos()));
+        listSensores.setItems(FXCollections.observableArrayList(droneDAO.obtenerSensores()));
         listSensores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     private void refrescarTabla() {
-        tablaDrones.setItems(FXCollections.observableArrayList(droneDAO.listarDrones()));
+        tablaDrones.setItems(FXCollections.observableArrayList(droneDAO.listar()));
     }
-
     // -------------------- CRUD (contra DroneDAO) --------------------
 
     @FXML
@@ -102,14 +101,13 @@ public class DroneController implements Initializable {
         }
         if (!validarFormulario()) return;
 
-        droneDAO.actualizar(
-                droneSeleccionado,
-                txtSerial.getText().trim(),
-                txtFabricante.getText().trim(),
-                Double.parseDouble(txtPeso.getText().trim()),
-                cbPiloto.getValue(),
-                listSensores.getSelectionModel().getSelectedItems()
-        );
+        droneSeleccionado.setSerial(txtSerial.getText().trim());
+        droneSeleccionado.setFabricante(txtFabricante.getText().trim());
+        droneSeleccionado.setPeso(Double.parseDouble(txtPeso.getText().trim()));
+        droneSeleccionado.setPiloto(cbPiloto.getValue());
+        droneSeleccionado.setSensores(listSensores.getSelectionModel().getSelectedItems());
+
+        droneDAO.actualizar(droneSeleccionado);
 
         refrescarTabla();
         limpiarFormulario();
@@ -128,7 +126,6 @@ public class DroneController implements Initializable {
         limpiarFormulario();
         mostrarMensaje("Drone eliminado correctamente.", false);
     }
-
     @FXML
     private void limpiarFormulario() {
         txtSerial.clear();

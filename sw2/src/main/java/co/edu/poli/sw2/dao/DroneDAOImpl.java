@@ -9,10 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementacion de DroneDAO que persiste toda la "base de datos"
- * (pilotos, sensores y drones) en un archivo binario, para que la
- * informacion no se pierda al cerrar la app y pueda reutilizarse
- * desde cualquier controlador/vista.
+ * Implementacion de DroneDAO que persiste la "base de datos"
+ * (pilotos, sensores y drones) en un archivo binario.
+ *
+ * Piloto y Sensor siguen siendo catalogos fijos/genericos (sin CRUD
+ * propio todavia); se exponen aqui con metodos propios de la clase,
+ * NO como parte del contrato generico GenericDAO, ya que ese contrato
+ * es exclusivo de la entidad que tiene CRUD (Drone).
+ *
+ * A futuro, cuando Piloto/Sensor tengan CRUD, bastara con crear
+ * PilotoDAOImpl implements GenericDAO<Piloto>, etc.
  */
 public class DroneDAOImpl implements DroneDAO {
 
@@ -28,10 +34,10 @@ public class DroneDAOImpl implements DroneDAO {
         cargarDatos();
     }
 
-    // -------------------- CRUD Drone --------------------
+    // -------------------- CRUD generico (Drone) --------------------
 
     @Override
-    public List<Drone> listarDrones() {
+    public List<Drone> listar() {
         return drones;
     }
 
@@ -50,25 +56,21 @@ public class DroneDAOImpl implements DroneDAO {
     }
 
     @Override
-    public void actualizar(Drone drone, String serial, String fabricante, double peso,
-                            Piloto piloto, List<Sensor> sensoresSeleccionados) {
-        drone.setSerial(serial);
-        drone.setFabricante(fabricante);
-        drone.setPeso(peso);
-        drone.setPiloto(piloto);
-        drone.setSensores(sensoresSeleccionados);
+    public Drone actualizar(Drone drone) {
+        // El controlador ya modifico el drone (via setters) antes de llamar aqui.
+        // Como es el mismo objeto que esta en la lista, solo hace falta persistir.
         guardarDatos();
+        return drone;
     }
 
-    // -------------------- Catalogos (Piloto / Sensor) --------------------
+    // -------------------- Catalogos fijos (Piloto / Sensor) --------------------
+    // No forman parte del contrato generico: son datos de apoyo para el CRUD de Drone.
 
-    @Override
-    public List<Piloto> listarPilotos() {
+    public List<Piloto> obtenerPilotos() {
         return pilotos;
     }
 
-    @Override
-    public List<Sensor> listarSensores() {
+    public List<Sensor> obtenerSensores() {
         return sensores;
     }
 
