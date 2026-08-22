@@ -30,12 +30,6 @@
             <Label text="Peso (kg):"/>
             <TextField fx:id="txtPeso" promptText="Ej: 0.9"/>
 
-            <Label text="Piloto asignado:"/>
-            <ComboBox fx:id="cbPiloto" prefWidth="290.0"/>
-
-            <Label text="Sensores (Ctrl/Shift + clic para varios):"/>
-            <ListView fx:id="listSensores" prefHeight="100.0"/>
-
             <HBox spacing="10">
                 <Button fx:id="btnAgregar" text="Agregar" onAction="#agregarDrone" prefWidth="130.0"/>
                 <Button fx:id="btnModificar" text="Modificar" onAction="#modificarDrone" prefWidth="130.0"/>
@@ -56,8 +50,6 @@
                 <TableColumn fx:id="colSerial" text="Serial" prefWidth="100.0"/>
                 <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="120.0"/>
                 <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80.0"/>
-                <TableColumn fx:id="colPiloto" text="Piloto" prefWidth="140.0"/>
-                <TableColumn fx:id="colSensores" text="Sensores" prefWidth="220.0"/>
             </columns>
             <BorderPane.margin><Insets top="10" right="15" bottom="10" left="0"/></BorderPane.margin>
         </TableView>

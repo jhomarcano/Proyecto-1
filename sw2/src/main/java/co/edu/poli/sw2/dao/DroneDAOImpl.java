@@ -1,101 +1,134 @@
 package co.edu.poli.sw2.dao;
-
+ 
 import co.edu.poli.sw2.modelo.Drone;
-
-import java.io.*;
+import co.edu.poli.sw2.exception.ConexionBDException;
+import co.edu.poli.sw2.exception.DronDuplicadoException;
+import co.edu.poli.sw2.exception.DronNoEncontradoException;
+import co.edu.poli.sw2.exception.DronValidacionException;
+ 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-/**
- * DAO de Drone: unica responsabilidad es persistir y administrar
- * la lista de drones. No conoce nada de Piloto ni Sensor;
- * esos catalogos ahora viven en el controlador.
- */
+ 
 public class DroneDAOImpl implements DroneDAO {
-
-    private static final String CARPETA_DATOS = "data";
-    private static final String ARCHIVO_DB = CARPETA_DATOS + File.separator + "sw2_drones.dat";
-
-    private List<Drone> drones;
-    private int contadorDroneId;
-
-    public DroneDAOImpl() {
-        cargarDatos();
-    }
-
+	private static final String SQLSTATE_UNIQUE_VIOLATION = "23505";
+	private static final String SQLSTATE_CHECK_VIOLATION = "23514";
+	private static final String SQLSTATE_NOT_NULL_VIOLATION = "23502";
+ 
     @Override
     public List<Drone> listar() {
-        return drones;
+        List<Drone> drones = new ArrayList<>();
+ 
+        String sql = "SELECT id, serial, fabricante, peso FROM dron ORDER BY id";
+ 
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+ 
+            while (rs.next()) {
+            	drones.add(mapearDrone(rs));
+            }
+            return drones;
+ 
+        } catch (SQLException e) {
+        	throw new ConexionBDException("No fue posible obtener el listado de drones.", e);
+        }
     }
-
+ 
     @Override
     public Drone crear(Drone drone) {
-        drone.setId(contadorDroneId++);
-        drones.add(drone);
-        guardarDatos();
-        return drone;
+    	String sqlInsert = "INSERT INTO dron (serial, fabricante, peso) VALUES (?, ?, ?) RETURNING id";
+ 
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sqlInsert)) {
+ 
+            setearParametrosDron(ps, drone);
+ 
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    drone.setId(rs.getInt("id"));
+                }
+            }
+ 
+            return drone;
+ 
+        } catch (SQLException e) {
+        	throw traducirExcepcion(e, drone.getSerial());
+        }
+ 
     }
-
+ 
     @Override
     public void eliminar(Drone drone) {
-        drones.remove(drone);
-        guardarDatos();
+        String sql = "DELETE FROM dron WHERE id = ?";
+ 
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+ 
+            ps.setInt(1, drone.getId());
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+            throw new DronNoEncontradoException(drone.getId());
+            }
+ 
+        } catch (SQLException e) {
+        	throw new ConexionBDException("No fue posible eliminar el drone.", e);
+        }
     }
-
+ 
     @Override
     public Drone actualizar(Drone drone) {
-        // El drone ya fue modificado por el controlador (setters);
-        // aqui solo se persiste el cambio.
-        guardarDatos();
-        return drone;
-    }
-
-    // -------------------- Persistencia --------------------
-
-    @SuppressWarnings("unchecked")
-    private void cargarDatos() {
-        File archivo = new File(ARCHIVO_DB);
-
-        if (archivo.exists()) {
-            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(archivo))) {
-                EstadoDrones estado = (EstadoDrones) in.readObject();
-                this.drones = estado.drones;
-                this.contadorDroneId = estado.contadorDroneId;
-                return;
-            } catch (IOException | ClassNotFoundException e) {
-                System.err.println("No se pudo leer la base de datos de drones, se inicia vacia: " + e.getMessage());
+    	String sqlUpdate = "UPDATE dron SET serial = ?, fabricante = ?, peso = ? WHERE id = ?";
+ 
+        try (Connection con = ConexionBD.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+ 
+            setearParametrosDron(ps, drone);
+            ps.setInt(4, drone.getId());
+            int filas = ps.executeUpdate();
+            if (filas == 0) {
+            throw new DronNoEncontradoException(drone.getId());
             }
+            return drone;
+ 
+        } catch (SQLException e) {
+        	throw traducirExcepcion(e, drone.getSerial());
         }
-
-        drones = new ArrayList<>();
-        contadorDroneId = 1;
+ 
     }
-
-    private void guardarDatos() {
-        File carpeta = new File(CARPETA_DATOS);
-        if (!carpeta.exists()) {
-            carpeta.mkdirs();
-        }
-
-        EstadoDrones estado = new EstadoDrones(drones, contadorDroneId);
-
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(ARCHIVO_DB))) {
-            out.writeObject(estado);
-        } catch (IOException e) {
-            System.err.println("No se pudo guardar la base de datos de drones: " + e.getMessage());
-        }
+ 
+    // -------------------- Helpers privados --------------------
+ 
+    private void setearParametrosDron(PreparedStatement ps, Drone drone) throws SQLException {
+        ps.setString(1, drone.getSerial());
+        ps.setString(2, drone.getFabricante());
+        ps.setDouble(3, drone.getPeso());
     }
-
-    /** Snapshot serializable, ahora solo de Drones. */
-    private static class EstadoDrones implements Serializable {
-        private static final long serialVersionUID = 1L;
-
-        private final List<Drone> drones;
-        private final int contadorDroneId;
-
-        EstadoDrones(List<Drone> drones, int contadorDroneId) {
-            this.drones = drones;
-            this.contadorDroneId = contadorDroneId;
-        }
+ 
+    private Drone mapearDrone(ResultSet rs) throws SQLException {
+    	return new Drone(
+    			rs.getInt("id"),
+                rs.getString("serial"),
+                rs.getString("fabricante"),
+                rs.getDouble("peso")
+          );
+      }
+    
+    private RuntimeException traducirExcepcion(SQLException e, String serial) {
+    	String estado = e.getSQLState();
+    	if (SQLSTATE_UNIQUE_VIOLATION.equals(estado)) {
+    	return new DronDuplicadoException(serial);
+    	}
+    	if (SQLSTATE_CHECK_VIOLATION.equals(estado) || SQLSTATE_NOT_NULL_VIOLATION.equals(estado)) {
+    	return new DronValidacionException(
+    	"Los datos del drone no cumplen las reglas de validacion de la base de datos.");
+    	}
+    	return new ConexionBDException("No fue posible guardar el drone.", e);
+   
+    
     }
 }
+ 
