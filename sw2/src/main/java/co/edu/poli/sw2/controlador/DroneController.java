@@ -1,12 +1,8 @@
 package co.edu.poli.sw2.controlador;
  
-import co.edu.poli.sw2.dao.CatalogoRepositorio;
-import co.edu.poli.sw2.dao.DroneDAO;
-import co.edu.poli.sw2.dao.DroneDAOImpl;
+import co.edu.poli.sw2.exception.DronException;
 import co.edu.poli.sw2.modelo.Drone;
-import co.edu.poli.sw2.modelo.Piloto;
-import co.edu.poli.sw2.modelo.Sensor;
-import javafx.beans.property.SimpleStringProperty;
+import co.edu.poli.sw2.service.DroneService;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,8 +18,6 @@ public class DroneController implements Initializable {
     @FXML private TextField txtSerial;
     @FXML private TextField txtFabricante;
     @FXML private TextField txtPeso;
-    @FXML private ComboBox<Piloto> cbPiloto;
-    @FXML private ListView<Sensor> listSensores;
     @FXML private Label lblMensaje;
  
     // ---- Tabla ----
@@ -32,16 +26,13 @@ public class DroneController implements Initializable {
     @FXML private TableColumn<Drone, String> colSerial;
     @FXML private TableColumn<Drone, String> colFabricante;
     @FXML private TableColumn<Drone, Double> colPeso;
-    @FXML private TableColumn<Drone, String> colPiloto;
-    @FXML private TableColumn<Drone, String> colSensores;
  
-    private final DroneDAO droneDAO = new DroneDAOImpl();
+    private final DroneService droneService = new DroneService();
     private Drone droneSeleccionado;
  
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configurarTabla();
-        cargarCatalogos();
         refrescarTabla();
  
         tablaDrones.getSelectionModel().selectedItemProperty().addListener((obs, viejo, nuevo) -> {
@@ -58,69 +49,48 @@ public class DroneController implements Initializable {
         colFabricante.setCellValueFactory(new PropertyValueFactory<>("fabricante"));
         colPeso.setCellValueFactory(new PropertyValueFactory<>("peso"));
  
-        colPiloto.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getPilotoNombre()));
-        colSensores.setCellValueFactory(data ->
-                new SimpleStringProperty(data.getValue().getSensoresTexto()));
-    }
- 
-    /**
-     * Antes: listas de Piloto/Sensor "quemadas" en el controlador
-     * (crearPilotos()/crearSensores()).
-     * Ahora: se consultan desde PostgreSQL a traves de
-     * CatalogoRepositorio, que solo lee (no crea/edita/elimina),
-     * respetando la regla de que el CRUD es exclusivo de Dron.
-     */
-    private void cargarCatalogos() {
-        cbPiloto.setItems(FXCollections.observableArrayList(CatalogoRepositorio.listarPilotos()));
-        listSensores.setItems(FXCollections.observableArrayList(CatalogoRepositorio.listarSensores()));
-        listSensores.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
  
     private void refrescarTabla() {
-        tablaDrones.setItems(FXCollections.observableArrayList(droneDAO.listar()));
+    	try {
+    		tablaDrones.setItems(FXCollections.observableArrayList(droneService.listar()));
+    		} catch (DronException ex) {
+    			ManejadorErroresUI.mostrar(ex);
+    		} catch (Exception ex) {
+    			ManejadorErroresUI.mostrarInesperado(ex);
+    		}
     }
  
-    // -------------------- CRUD (contra DroneDAO -> PostgreSQL) --------------------
+    // -------------------- CRUD (contra DroneService -> PostgreSQL) --------------------
  
     @FXML
     private void agregarDrone() {
-        if (!validarFormulario()) return;
- 
-        Drone nuevo = new Drone(
-                0,
-                txtSerial.getText().trim(),
-                txtFabricante.getText().trim(),
-                Double.parseDouble(txtPeso.getText().trim()),
-                cbPiloto.getValue()
-        );
-        nuevo.getSensores().addAll(listSensores.getSelectionModel().getSelectedItems());
- 
-        droneDAO.crear(nuevo);
-        refrescarTabla();
-        limpiarFormulario();
-        mostrarMensaje("Drone agregado correctamente.", false);
+    	try {
+            droneService.crear(txtSerial.getText(), txtFabricante.getText(), txtPeso.getText());
+            refrescarTabla();
+            limpiarFormulario();
+            mostrarMensaje("Drone agregado correctamente.", false);
+        } catch (DronException ex) {
+            mostrarMensaje(ex.getMessage(), true);
+            ManejadorErroresUI.mostrar(ex);
+    		} catch (Exception ex) {
+    			ManejadorErroresUI.mostrarInesperado(ex);
+    		}
     }
  
     @FXML
     private void modificarDrone() {
-        if (droneSeleccionado == null) {
-            mostrarMensaje("Selecciona un drone de la tabla para modificar.", true);
-            return;
+    	try {
+    		droneService.actualizar(droneSeleccionado, txtSerial.getText(), txtFabricante.getText(), txtPeso.getText());
+    		refrescarTabla();
+            limpiarFormulario();
+            mostrarMensaje("Drone modificado correctamente.", false);
+        } catch (DronException ex) {
+            mostrarMensaje(ex.getMessage(), true);
+            ManejadorErroresUI.mostrar(ex);
+        } catch (Exception ex) {
+            ManejadorErroresUI.mostrarInesperado(ex);
         }
-        if (!validarFormulario()) return;
- 
-        droneSeleccionado.setSerial(txtSerial.getText().trim());
-        droneSeleccionado.setFabricante(txtFabricante.getText().trim());
-        droneSeleccionado.setPeso(Double.parseDouble(txtPeso.getText().trim()));
-        droneSeleccionado.setPiloto(cbPiloto.getValue());
-        droneSeleccionado.setSensores(listSensores.getSelectionModel().getSelectedItems());
- 
-        droneDAO.actualizar(droneSeleccionado);
- 
-        refrescarTabla();
-        limpiarFormulario();
-        mostrarMensaje("Drone modificado correctamente.", false);
     }
  
     @FXML
@@ -130,19 +100,23 @@ public class DroneController implements Initializable {
             mostrarMensaje("Selecciona un drone de la tabla para eliminar.", true);
             return;
         }
-        droneDAO.eliminar(seleccionado);
-        refrescarTabla();
-        limpiarFormulario();
-        mostrarMensaje("Drone eliminado correctamente.", false);
+        try {
+            droneService.eliminar(seleccionado);
+            refrescarTabla();
+            limpiarFormulario();
+            mostrarMensaje("Drone eliminado correctamente.", false);
+        } catch (DronException ex) {
+            mostrarMensaje(ex.getMessage(), true);
+            ManejadorErroresUI.mostrar(ex);
+        } catch (Exception ex) {
+            ManejadorErroresUI.mostrarInesperado(ex);
+        }
     }
  
     @FXML
     private void limpiarFormulario() {
         txtSerial.clear();
         txtFabricante.clear();
-        txtPeso.clear();
-        cbPiloto.getSelectionModel().clearSelection();
-        listSensores.getSelectionModel().clearSelection();
         tablaDrones.getSelectionModel().clearSelection();
         droneSeleccionado = null;
         lblMensaje.setText("");
@@ -154,36 +128,8 @@ public class DroneController implements Initializable {
         txtSerial.setText(d.getSerial());
         txtFabricante.setText(d.getFabricante());
         txtPeso.setText(String.valueOf(d.getPeso()));
-        cbPiloto.setValue(d.getPiloto());
- 
-        listSensores.getSelectionModel().clearSelection();
-        for (Sensor s : d.getSensores()) {
-            listSensores.getSelectionModel().select(s);
-        }
     }
  
-    private boolean validarFormulario() {
-        if (txtSerial.getText().isBlank()
-                || txtFabricante.getText().isBlank() || txtPeso.getText().isBlank()) {
-            mostrarMensaje("Todos los campos de texto son obligatorios.", true);
-            return false;
-        }
-        if (cbPiloto.getValue() == null) {
-            mostrarMensaje("Debes asignar un piloto (relacion 1 a 1).", true);
-            return false;
-        }
-        try {
-            double peso = Double.parseDouble(txtPeso.getText().trim());
-            if (peso <= 0) {
-                mostrarMensaje("El peso debe ser un numero mayor que 0.", true);
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            mostrarMensaje("El peso debe ser un numero valido (ej: 0.9).", true);
-            return false;
-        }
-        return true;
-    }
  
     private void mostrarMensaje(String texto, boolean esError) {
         lblMensaje.setText(texto);

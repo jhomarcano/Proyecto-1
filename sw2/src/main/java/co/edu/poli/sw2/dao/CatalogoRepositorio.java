@@ -1,5 +1,6 @@
 package co.edu.poli.sw2.dao;
  
+import co.edu.poli.sw2.exception.ConexionBDException;
 import co.edu.poli.sw2.modelo.Piloto;
 import co.edu.poli.sw2.modelo.Sensor;
  
@@ -9,25 +10,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
- 
-/**
- * Acceso de SOLO LECTURA a los catalogos de Piloto y Sensor.
- *
- * Se mantiene deliberadamente fuera del patron GenericDAO/DroneDAO:
- * la regla de negocio del proyecto establece que el CRUD (crear,
- * modificar, eliminar) solo aplica a la entidad Dron. Piloto y
- * Sensor se administran directamente en la base de datos (por
- * ejemplo, con INSERT manuales o el script schema.sql) y la
- * aplicacion unicamente los consulta para poblar el ComboBox y
- * el ListView del formulario.
- *
- * Reemplaza a los metodos crearPilotos()/crearSensores() que
- * antes estaban "quemados" en DroneController.
- */
+
 public class CatalogoRepositorio {
  
     private CatalogoRepositorio() {
-        // Clase de utilidades: no se instancia
+
     }
  
     public static List<Piloto> listarPilotos() {
@@ -47,7 +34,7 @@ public class CatalogoRepositorio {
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("Error al listar pilotos desde la base de datos: " + e.getMessage());
+        	throw new ConexionBDException("No fue posible listar los pilotos.", e);
         }
         return pilotos;
     }
@@ -68,7 +55,7 @@ public class CatalogoRepositorio {
                 ));
             }
         } catch (SQLException e) {
-            System.err.println("Error al listar sensores desde la base de datos: " + e.getMessage());
+        	throw new ConexionBDException("No fue posible listar los sensores.", e);
         }
         return sensores;
     }
