@@ -24,9 +24,9 @@ public class DroneDAOImpl implements DroneDAO {
  
         String sql = "SELECT id, serial, fabricante, peso FROM dron ORDER BY id";
  
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = ConexionBD.getInstancia().obtenerConexion();
+        	     PreparedStatement ps = con.prepareStatement(sql);
+        	     ResultSet rs = ps.executeQuery()) {
  
             while (rs.next()) {
             	drones.add(mapearDrone(rs));
@@ -42,8 +42,8 @@ public class DroneDAOImpl implements DroneDAO {
     public Drone crear(Drone drone) {
     	String sqlInsert = "INSERT INTO dron (serial, fabricante, peso) VALUES (?, ?, ?) RETURNING id";
  
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sqlInsert)) {
+    	try (Connection con = ConexionBD.getInstancia().obtenerConexion();
+    		     PreparedStatement ps = con.prepareStatement(sqlInsert)) {
  
             setearParametrosDron(ps, drone);
  
@@ -65,8 +65,9 @@ public class DroneDAOImpl implements DroneDAO {
     public void eliminar(Drone drone) {
         String sql = "DELETE FROM dron WHERE id = ?";
  
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = ConexionBD.getInstancia().obtenerConexion();
+        	     PreparedStatement ps = con.prepareStatement(sql);
+        	     ResultSet rs = ps.executeQuery()) {
  
             ps.setInt(1, drone.getId());
             int filas = ps.executeUpdate();
@@ -83,8 +84,9 @@ public class DroneDAOImpl implements DroneDAO {
     public Drone actualizar(Drone drone) {
     	String sqlUpdate = "UPDATE dron SET serial = ?, fabricante = ?, peso = ? WHERE id = ?";
  
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sqlUpdate)) {
+    	try (Connection con = ConexionBD.getInstancia().obtenerConexion();
+    		     PreparedStatement ps = con.prepareStatement(sqlUpdate);
+    		     ResultSet rs = ps.executeQuery()) {
  
             setearParametrosDron(ps, drone);
             ps.setInt(4, drone.getId());

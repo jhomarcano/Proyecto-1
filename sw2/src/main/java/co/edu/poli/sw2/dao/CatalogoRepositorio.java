@@ -21,9 +21,9 @@ public class CatalogoRepositorio {
         List<Piloto> pilotos = new ArrayList<>();
         String sql = "SELECT id, nombre, experiencia, telefono FROM piloto ORDER BY id";
  
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = ConexionBD.getInstancia().obtenerConexion();
+        	     PreparedStatement ps = con.prepareStatement(sql);
+        	     ResultSet rs = ps.executeQuery()) {
  
             while (rs.next()) {
                 pilotos.add(new Piloto(
@@ -43,9 +43,9 @@ public class CatalogoRepositorio {
         List<Sensor> sensores = new ArrayList<>();
         String sql = "SELECT id, tipo, fabricante FROM sensor ORDER BY id";
  
-        try (Connection con = ConexionBD.obtenerConexion();
-             PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (Connection con = ConexionBD.getInstancia().obtenerConexion();
+        	     PreparedStatement ps = con.prepareStatement(sql);
+        	     ResultSet rs = ps.executeQuery()) {
  
             while (rs.next()) {
                 sensores.add(new Sensor(
