@@ -1,32 +1,30 @@
 package co.edu.poli.sw2.modelo;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.io.Serializable;
 
-public class Drone implements Serializable {
-    private static final long serialVersionUID = 1L;
-    
+/**
+ * Entidad abstracta que representa un dron. Define los atributos comunes
+ * a todos los tipos de dron; las subclases concretas ({@link Agricultura},
+ * {@link Vigilancia}) agregan sus atributos especificos.
+ */
+public abstract class Drone implements Serializable {
+
+    private static final long serialVersionUID = 3L;
+
     private int id;
     private String serial;
     private String fabricante;
+    private String modelo;
     private double peso;
 
-    // Relacion 1 a 1: un dron tiene un unico piloto
-    private Piloto piloto;
-
-    // Relacion muchos a muchos: un dron puede tener varios sensores
-    private List<Sensor> sensores = new ArrayList<>();
-
-    public Drone(int id, String serial, String fabricante, double peso, Piloto piloto) {
+    protected Drone(int id, String serial, String fabricante, String modelo, double peso) {
         this.id = id;
         this.serial = serial;
         this.fabricante = fabricante;
+        this.modelo = modelo;
         this.peso = peso;
-        this.piloto = piloto;
     }
 
-    // ---- Getters / Setters normales ----
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -36,28 +34,12 @@ public class Drone implements Serializable {
     public String getFabricante() { return fabricante; }
     public void setFabricante(String fabricante) { this.fabricante = fabricante; }
 
+    public String getModelo() { return modelo; }
+    public void setModelo(String modelo) { this.modelo = modelo; }
+
     public double getPeso() { return peso; }
     public void setPeso(double peso) { this.peso = peso; }
 
-    public Piloto getPiloto() { return piloto; }
-    public void setPiloto(Piloto piloto) { this.piloto = piloto; }
-
-    public List<Sensor> getSensores() { return sensores; }
-    public void setSensores(List<Sensor> nuevos) {
-        this.sensores = new ArrayList<>(nuevos);
-    }
-
-    public String getPilotoNombre() {
-        return piloto != null ? piloto.getNombre() : "Sin asignar";
-    }
-
-    public String getSensoresTexto() {
-        if (sensores.isEmpty()) return "Ninguno";
-        StringBuilder sb = new StringBuilder();
-        for (Sensor s : sensores) {
-            if (sb.length() > 0) sb.append(", ");
-            sb.append(s.getTipo());
-        }
-        return sb.toString();
-    }
+    /** Discriminador usado por la capa DAO y por la vista. */
+    public abstract String getTipo();
 }

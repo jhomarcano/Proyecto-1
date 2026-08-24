@@ -21,20 +21,25 @@
         <VBox spacing="10" prefWidth="320.0">
             <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
 
+            <Label text="Tipo de dron:"/>
+            <ComboBox fx:id="cmbTipo" prefWidth="290.0"/>
+
             <Label text="Serial:"/>
             <TextField fx:id="txtSerial" promptText="Ej: SN-00123"/>
 
             <Label text="Fabricante:"/>
             <TextField fx:id="txtFabricante" promptText="Ej: DJI"/>
 
+            <Label text="Modelo:"/>
+            <TextField fx:id="txtModelo" promptText="Ej: Mavic 3"/>
+
             <Label text="Peso (kg):"/>
             <TextField fx:id="txtPeso" promptText="Ej: 0.9"/>
 
-            <Label text="Piloto asignado:"/>
-            <ComboBox fx:id="cbPiloto" prefWidth="290.0"/>
+            <Label fx:id="lblCapacidad" text="Capacidad del tanque (L):"/>
+            <TextField fx:id="txtCapacidad" promptText="Ej: 10.5"/>
 
-            <Label text="Sensores (Ctrl/Shift + clic para varios):"/>
-            <ListView fx:id="listSensores" prefHeight="100.0"/>
+            <CheckBox fx:id="chkDeteccionTermica" text="Deteccion termica"/>
 
             <HBox spacing="10">
                 <Button fx:id="btnAgregar" text="Agregar" onAction="#agregarDrone" prefWidth="130.0"/>
@@ -53,11 +58,12 @@
         <TableView fx:id="tablaDrones">
             <columns>
                 <TableColumn fx:id="colId" text="ID" prefWidth="40.0"/>
+                <TableColumn fx:id="colTipo" text="Tipo" prefWidth="110.0"/>
                 <TableColumn fx:id="colSerial" text="Serial" prefWidth="100.0"/>
-                <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="120.0"/>
+                <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="110.0"/>
+                <TableColumn fx:id="colModelo" text="Modelo" prefWidth="100.0"/>
                 <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="80.0"/>
-                <TableColumn fx:id="colPiloto" text="Piloto" prefWidth="140.0"/>
-                <TableColumn fx:id="colSensores" text="Sensores" prefWidth="220.0"/>
+                <TableColumn fx:id="colEspecifico" text="Atributo especifico" prefWidth="150.0"/>
             </columns>
             <BorderPane.margin><Insets top="10" right="15" bottom="10" left="0"/></BorderPane.margin>
         </TableView>
