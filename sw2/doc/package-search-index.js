@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"co.edu.poli.sw2"},{"l":"co.edu.poli.sw2.controlador"},{"l":"co.edu.poli.sw2.dao"},{"l":"co.edu.poli.sw2.exception"},{"l":"co.edu.poli.sw2.modelo"},{"l":"co.edu.poli.sw2.service"}];updateSearchResults();

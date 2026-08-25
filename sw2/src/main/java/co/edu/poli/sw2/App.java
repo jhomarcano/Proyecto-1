@@ -8,8 +8,22 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Punto de entrada de la aplicacion de gestion de drones.
+ * <p>
+ * Carga la vista principal desde {@code drone.fxml} y muestra la ventana.
+ * Cualquier fallo durante el arranque, incluido el de conexion a la base
+ * de datos, se presenta como alerta en lugar de imprimirse en consola.
+ *
+ * @author Alejandra Cano y Juan Rosero
+ */
 public class App extends Application {
 
+    /**
+     * Construye y muestra la ventana principal de la aplicacion.
+     *
+     * @param stage escenario principal que aporta JavaFX
+     */
     @Override
     public void start(Stage stage) {
         try {
@@ -25,6 +39,11 @@ public class App extends Application {
         }
     }
 
+    /**
+     * Arranca la aplicacion JavaFX.
+     *
+     * @param args argumentos de linea de comandos; no se utilizan
+     */
     public static void main(String[] args) {
         launch(args);
     }
