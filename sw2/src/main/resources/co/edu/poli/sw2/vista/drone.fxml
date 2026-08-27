@@ -49,6 +49,10 @@
                 <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarDrone" prefWidth="130.0"/>
                 <Button fx:id="btnLimpiar" text="Limpiar" onAction="#limpiarFormulario" prefWidth="130.0"/>
             </HBox>
+            <HBox spacing="10">
+                <Button fx:id="btnAleatorio" text="Generar Vigilancia Aleatoria"
+                        onAction="#generarVigilanciaAleatoria" prefWidth="270.0"/>
+            </HBox>
 
             <Label fx:id="lblMensaje" wrapText="true" style="-fx-text-fill: #c0392b;"/>
         </VBox>
