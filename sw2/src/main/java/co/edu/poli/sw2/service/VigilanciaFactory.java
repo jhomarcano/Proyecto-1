@@ -7,10 +7,13 @@ import co.edu.poli.sw2.modelo.Vigilancia;
  * Factoria concreta que produce instancias de {@link Vigilancia}.
  * <p>
  * Recibe en el constructor los datos capturados en el formulario y los
- * conserva hasta que se invoca {@link #crearDrone()}.
+ * conserva hasta que se invoca {@link #crearDrone()}. El ensamblaje del
+ * objeto final se delega en {@link VigilanciaBuilder}, que es quien
+ * conoce el orden de construccion de la subclase.
  *
  * @author Alejandra Cano y Juan Rosero
  * @see DroneFactory
+ * @see VigilanciaBuilder
  */
 public class VigilanciaFactory extends DroneFactory {
 
@@ -50,10 +53,17 @@ public class VigilanciaFactory extends DroneFactory {
     /**
      * {@inheritDoc}
      *
-     * @return una instancia de {@link Vigilancia} con id en 0
+     * @return una instancia de {@link Vigilancia} con id en 0, ensamblada
+     *         mediante {@link VigilanciaBuilder}
      */
     @Override
     public Drone crearDrone() {
-        return new Vigilancia(0, serial, fabricante, modelo, peso, deteccionTermica);
+        return new VigilanciaBuilder()
+                .conSerial(serial)
+                .conFabricante(fabricante)
+                .conModelo(modelo)
+                .conPeso(peso)
+                .conDeteccionTermica(deteccionTermica)
+                .build();
     }
 }

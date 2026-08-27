@@ -155,4 +155,21 @@ public class DroneService {
                 throw new DronValidacionException("Tipo de drone no soportado: " + tipo);
         }
     }
+    
+    /** Generador de drones de vigilancia aleatorios, con base en el historial de la BD. */
+    private final VigilanciaGeneradorAleatorio generadorAleatorio = new VigilanciaGeneradorAleatorio();
+
+    /**
+     * Genera un dron de vigilancia aleatorio con base en los registros
+     * existentes en la base de datos.
+     * <p>
+     * No persiste el resultado: el controlador decide si lo muestra en el
+     * formulario para que el usuario lo revise antes de guardarlo.
+     *
+     * @return un dron de vigilancia nuevo, con id en 0
+     */
+    public Vigilancia generarVigilanciaAleatoria() {
+        return generadorAleatorio.generar(droneDAO.listar());
+    }
 }
+

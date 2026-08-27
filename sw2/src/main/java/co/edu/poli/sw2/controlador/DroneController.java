@@ -331,4 +331,33 @@ public class DroneController implements Initializable {
         lblMensaje.setText(texto);
         lblMensaje.setStyle(esError ? "-fx-text-fill: #c0392b;" : "-fx-text-fill: #27ae60;");
     }
+    /**
+     * Genera un dron de vigilancia aleatorio y lo vuelca en el formulario.
+     * <p>
+     * No lo persiste: deja el formulario listo en modo "creacion" (sin
+     * seleccion previa) para que el usuario revise los datos y presione
+     * Agregar si quiere guardarlo.
+     * 
+     */
+    @FXML
+    private void generarVigilanciaAleatoria() {
+        try {
+            Vigilancia aleatorio = droneService.generarVigilanciaAleatoria();
+
+            limpiarFormulario();
+            cmbTipo.getSelectionModel().select(TIPO_VIGILANCIA);
+            txtSerial.setText(aleatorio.getSerial());
+            txtFabricante.setText(aleatorio.getFabricante());
+            txtModelo.setText(aleatorio.getModelo());
+            txtPeso.setText(String.valueOf(aleatorio.getPeso()));
+            chkDeteccionTermica.setSelected(aleatorio.isDeteccionTermica());
+
+            mostrarMensaje("Datos aleatorios generados. Revisa y presiona Agregar para guardar.", false);
+        } catch (DronException ex) {
+            mostrarMensaje(ex.getMessage(), true);
+            ManejadorErroresUI.mostrar(ex);
+        } catch (Exception ex) {
+            ManejadorErroresUI.mostrarInesperado(ex);
+        }
+    }
 }
