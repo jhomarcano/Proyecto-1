@@ -360,4 +360,28 @@ public class DroneController implements Initializable {
             ManejadorErroresUI.mostrarInesperado(ex);
         }
     }
+    
+    /**
+     * Clona el dron seleccionado y muestra la comparacion en una ventana.
+     * <p>
+     * No persiste nada: el clon solo existe mientras la ventana esta
+     * abierta. Sirve para evidenciar que el patron Prototype produce un
+     * objeto independiente y no una segunda referencia al mismo.
+     */
+    @FXML
+    private void clonarDrone() {
+        try {
+            Drone seleccionado = tablaDrones.getSelectionModel().getSelectedItem();
+            Drone clon = droneService.clonar(seleccionado);
+
+            VentanaClonacion.mostrar(seleccionado, clon, tablaDrones.getScene().getWindow());
+
+            mostrarMensaje("Clon creado en memoria. La base de datos no se modifico.", false);
+        } catch (DronException ex) {
+            mostrarMensaje(ex.getMessage(), true);
+            ManejadorErroresUI.mostrar(ex);
+        } catch (Exception ex) {
+            ManejadorErroresUI.mostrarInesperado(ex);
+        }
+    }
 }

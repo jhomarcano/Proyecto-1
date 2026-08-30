@@ -171,5 +171,22 @@ public class DroneService {
     public Vigilancia generarVigilanciaAleatoria() {
         return generadorAleatorio.generar(droneDAO.listar());
     }
+    
+    /** Clonador de drones. Implementa el patron Prototype fuera del modelo. */
+    private final DronePrototype prototipo = new DronePrototype();
+
+    /**
+     * Duplica el dron seleccionado aplicando el patron Prototype.
+     * <p>
+     * No se llama al DAO en ningun momento: la copia se queda en
+     * memoria y la base de datos no cambia.
+     *
+     * @param original dron seleccionado en la tabla
+     * @return una copia independiente, con id en 0
+     * @throws DronValidacionException si no hay ningun dron seleccionado
+     */
+    public Drone clonar(Drone original) {
+        return prototipo.clonar(original);
+    }
 }
 

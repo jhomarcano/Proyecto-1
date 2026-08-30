@@ -53,6 +53,11 @@
                 <Button fx:id="btnAleatorio" text="Generar Vigilancia Aleatoria"
                         onAction="#generarVigilanciaAleatoria" prefWidth="270.0"/>
             </HBox>
+            
+                        <HBox spacing="10">
+                <Button fx:id="btnClonar" text="Clonar (Prototype)"
+                        onAction="#clonarDrone" prefWidth="270.0"/>
+            </HBox>
 
             <Label fx:id="lblMensaje" wrapText="true" style="-fx-text-fill: #c0392b;"/>
         </VBox>
