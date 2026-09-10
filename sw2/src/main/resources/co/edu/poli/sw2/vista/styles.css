@@ -1,0 +1,155 @@
+/*
+ * Hoja de estilos de la aplicacion de gestion de drones.
+ * Autores: Alejandra Cano y Juan Rosero
+ */
+
+/* ---------- Base ---------- */
+
+.root {
+    -fx-background-color: #eef2f7;
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------- Barra superior ---------- */
+
+.barra-titulo {
+    -fx-background-color: linear-gradient(to right, #1b2838, #2c3e50);
+    -fx-padding: 16 24 16 24;
+}
+
+.titulo-app {
+    -fx-text-fill: white;
+    -fx-font-size: 21px;
+    -fx-font-weight: bold;
+}
+
+.subtitulo-app {
+    -fx-text-fill: #9fb3c8;
+    -fx-font-size: 12px;
+}
+
+/* ---------- Tarjetas ---------- */
+
+.tarjeta {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3);
+}
+
+.titulo-seccion {
+    -fx-text-fill: #7f8c8d;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- Formulario ---------- */
+
+.etiqueta-campo {
+    -fx-text-fill: #34495e;
+    -fx-font-size: 12px;
+}
+
+.text-field, .combo-box {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #d5dbe1;
+    -fx-border-width: 1;
+    -fx-background-color: #fbfcfd;
+    -fx-padding: 7 10 7 10;
+    -fx-font-size: 12px;
+}
+
+.text-field:focused, .combo-box:focused {
+    -fx-border-color: #2980b9;
+    -fx-background-color: white;
+}
+
+.text-field:disabled {
+    -fx-background-color: #eceff1;
+    -fx-opacity: 0.8;
+}
+
+.check-box {
+    -fx-text-fill: #34495e;
+    -fx-font-size: 12px;
+}
+
+/* ---------- Botones ---------- */
+
+.boton {
+    -fx-background-radius: 6;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 14 9 14;
+    -fx-cursor: hand;
+    -fx-text-fill: white;
+}
+
+.boton:hover  { -fx-opacity: 0.88; }
+.boton:pressed { -fx-opacity: 0.75; }
+
+.boton-primario   { -fx-background-color: #1e8449; }
+.boton-secundario { -fx-background-color: #2980b9; }
+.boton-peligro    { -fx-background-color: #c0392b; }
+.boton-neutro     { -fx-background-color: #7f8c8d; }
+.boton-patron     { -fx-background-color: #6c3483; }
+
+/* ---------- Mensajes ---------- */
+
+.mensaje-ok    { -fx-text-fill: #1e8449; -fx-font-size: 12px; -fx-font-weight: bold; }
+.mensaje-error { -fx-text-fill: #c0392b; -fx-font-size: 12px; -fx-font-weight: bold; }
+
+/* ---------- Tabla ---------- */
+
+.table-view {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #dde3e9;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2c3e50;
+    -fx-background-radius: 10 10 0 0;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 36;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.table-row-cell {
+    -fx-cell-size: 32;
+    -fx-border-color: transparent transparent #eceff1 transparent;
+}
+
+.table-row-cell:odd  { -fx-background-color: #fafbfc; }
+.table-row-cell:even { -fx-background-color: white; }
+
+.table-row-cell:selected {
+    -fx-background-color: #d6eaf8;
+    -fx-text-fill: #1b2838;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 8 0 8;
+}
+
+/* ---------- Scroll ---------- */
+
+.scroll-pane, .scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane { -fx-border-color: transparent; }

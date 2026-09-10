@@ -374,11 +374,12 @@ public class DroneController implements Initializable {
      * Muestra un mensaje en la etiqueta inferior del formulario.
      *
      * @param texto   mensaje a mostrar
-     * @param esError {@code true} para mostrarlo en rojo, {@code false} en verde
+     * @param esError {@code true} para el estilo de error, {@code false} para el de exito
      */
     private void mostrarMensaje(String texto, boolean esError) {
         lblMensaje.setText(texto);
-        lblMensaje.setStyle(esError ? "-fx-text-fill: #c0392b;" : "-fx-text-fill: #27ae60;");
+        lblMensaje.getStyleClass().removeAll("mensaje-ok", "mensaje-error");
+        lblMensaje.getStyleClass().add(esError ? "mensaje-error" : "mensaje-ok");
     }
     /**
      * Genera un dron de vigilancia aleatorio y lo vuelca en el formulario.
