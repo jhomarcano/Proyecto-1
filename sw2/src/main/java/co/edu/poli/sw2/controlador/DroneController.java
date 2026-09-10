@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import co.edu.poli.sw2.service.Componente;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -59,6 +60,12 @@ public class DroneController implements Initializable {
 
     /** Casilla de deteccion termica; se oculta cuando el tipo no es vigilancia. */
     @FXML private CheckBox chkDeteccionTermica;
+    
+    /** Casilla que activa el decorador de bateria adicional. */
+    @FXML private CheckBox chkBateriaAdicional;
+
+    /** Campo de captura de la descripcion de la bateria adicional. */
+    @FXML private TextField txtDescripcionBateria;
 
     /** Etiqueta donde se muestran los mensajes de exito o error. */
     @FXML private Label lblMensaje;
@@ -109,6 +116,9 @@ public class DroneController implements Initializable {
         cmbTipo.getSelectionModel().select(TIPO_AGRICULTURA);
         cmbTipo.valueProperty().addListener((obs, viejo, nuevo) -> ajustarCamposEspecificos(nuevo));
         ajustarCamposEspecificos(TIPO_AGRICULTURA);
+        chkBateriaAdicional.selectedProperty().addListener(
+                (obs, viejo, nuevo) -> ajustarCampoBateria(nuevo));
+        ajustarCampoBateria(false);
 
         configurarTabla();
         refrescarTabla();
@@ -174,6 +184,21 @@ public class DroneController implements Initializable {
         chkDeteccionTermica.setVisible(!esAgricultura);
         chkDeteccionTermica.setManaged(!esAgricultura);
     }
+    
+    /**
+     * Habilita o deshabilita el campo de descripcion de la bateria.
+     * <p>
+     * Al desmarcar la casilla se limpia el texto, para que no quede una
+     * descripcion residual de un intento anterior.
+     *
+     * @param activo {@code true} si la casilla quedo marcada
+     */
+    private void ajustarCampoBateria(boolean activo) {
+        txtDescripcionBateria.setDisable(!activo);
+        if (!activo) {
+            txtDescripcionBateria.clear();
+        }
+    }
 
     /**
      * Recarga la tabla con los drones registrados en la base de datos.
@@ -192,16 +217,25 @@ public class DroneController implements Initializable {
     }
 
     /**
-     * Registra un dron nuevo con los datos del formulario.
+     * Crea un dron con los datos del formulario.
      * <p>
-     * Si la operacion tiene exito, recarga la tabla y limpia el
-     * formulario. Si falla, muestra el mensaje de la excepcion en la
-     * etiqueta y en una alerta.
+     * Si la casilla de bateria adicional esta marcada, despues de
+     * persistir el dron se construye la cadena del patron Decorator y se
+     * muestra en una ventana. Ese anadido no se guarda: la tabla
+     * {@code dron} no tiene ninguna columna para la bateria.
      */
     @FXML
     private void agregarDrone() {
         try {
-            droneService.crear(
+            boolean conBateria = chkBateriaAdicional.isSelected();
+            String descripcionBateria = txtDescripcionBateria.getText();
+
+            if (conBateria && (descripcionBateria == null || descripcionBateria.isBlank())) {
+                mostrarMensaje("Escribe la descripcion de la bateria adicional.", true);
+                return;
+            }
+
+            Drone creado = droneService.crear(
                     cmbTipo.getValue(),
                     txtSerial.getText(),
                     txtFabricante.getText(),
@@ -209,9 +243,22 @@ public class DroneController implements Initializable {
                     txtPeso.getText(),
                     txtCapacidad.getText(),
                     chkDeteccionTermica.isSelected());
+
             refrescarTabla();
+
+            if (conBateria) {
+                Componente base = droneService.envolver(creado);
+                Componente decorado = droneService.envolverConBateria(base, descripcionBateria);
+
+                VentanaBateriaAdicional.mostrar(base, decorado, creado,
+                        descripcionBateria.trim(), tablaDrones.getScene().getWindow());
+            }
+
             limpiarFormulario();
-            mostrarMensaje("Drone agregado correctamente.", false);
+            mostrarMensaje(conBateria
+                    ? "Drone agregado. La bateria adicional solo existe en memoria."
+                    : "Drone agregado correctamente.", false);
+
         } catch (DronException ex) {
             mostrarMensaje(ex.getMessage(), true);
             ManejadorErroresUI.mostrar(ex);
@@ -293,6 +340,8 @@ public class DroneController implements Initializable {
         tablaDrones.getSelectionModel().clearSelection();
         droneSeleccionado = null;
         lblMensaje.setText("");
+        chkBateriaAdicional.setSelected(false);
+        txtDescripcionBateria.clear();
     }
 
     /**

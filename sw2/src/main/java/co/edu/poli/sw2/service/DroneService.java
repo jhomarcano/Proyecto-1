@@ -188,5 +188,46 @@ public class DroneService {
     public Drone clonar(Drone original) {
         return prototipo.clonar(original);
     }
+    /**
+     * Envuelve un dron para poder decorarlo.
+     * <p>
+     * Devuelve el componente base de la cadena del patron Decorator, sin
+     * ningun anadido todavia.
+     *
+     * @param drone dron a envolver; no puede ser {@code null}
+     * @return el componente base listo para ser decorado
+     * @throws DronValidacionException si no se recibio dron
+     */
+    public Componente envolver(Drone drone) {
+        if (drone == null) {
+            throw new DronValidacionException(
+                    "No hay drone para describir.");
+        }
+        return new DroneWrapper(drone);
+    }
+
+    /**
+     * Agrega una bateria adicional a un componente ya existente.
+     * <p>
+     * No se persiste nada: el anadido vive solo en el objeto que se
+     * devuelve. La base de datos guarda el dron, nunca su bateria extra.
+     *
+     * @param componente         componente a decorar; puede ser el wrapper
+     *                           base o un decorador previo
+     * @param descripcionBateria descripcion capturada en el formulario
+     * @return el componente decorado con la bateria adicional
+     * @throws DronValidacionException si falta el componente o la descripcion
+     */
+    public Componente envolverConBateria(Componente componente, String descripcionBateria) {
+        if (componente == null) {
+            throw new DronValidacionException(
+                    "No hay componente para decorar.");
+        }
+        if (descripcionBateria == null || descripcionBateria.isBlank()) {
+            throw new DronValidacionException(
+                    "Escribe la descripcion de la bateria adicional.");
+        }
+        return new BateriaAdicional(componente, descripcionBateria.trim());
+    }
 }
 

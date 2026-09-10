@@ -40,6 +40,10 @@
             <TextField fx:id="txtCapacidad" promptText="Ej: 10.5"/>
 
             <CheckBox fx:id="chkDeteccionTermica" text="Deteccion termica"/>
+            
+                        <CheckBox fx:id="chkBateriaAdicional" text="Bateria adicional (Decorator)"/>
+            <TextField fx:id="txtDescripcionBateria"
+                       promptText="Ej: Bateria LiPo 5000mAh de repuesto" disable="true"/>
 
             <HBox spacing="10">
                 <Button fx:id="btnAgregar" text="Agregar" onAction="#agregarDrone" prefWidth="130.0"/>
