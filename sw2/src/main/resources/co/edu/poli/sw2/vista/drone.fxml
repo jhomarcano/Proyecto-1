@@ -106,7 +106,20 @@
                 </VBox>
 
                 <Label fx:id="lblMensaje" wrapText="true" styleClass="mensaje-error"/>
+                
+                
+                            <VBox spacing="8" styleClass="tarjeta">
+    <Label text="CONTROL DEL DRONE (Bridge)" styleClass="titulo-seccion"/>
+    <fx:define>
+        <ToggleGroup fx:id="grupoControl"/>
+    </fx:define>
+    <RadioButton fx:id="radioSinControl" text="Sin control" toggleGroup="$grupoControl" selected="true"/>
+    <RadioButton fx:id="radioControlBasico" text="Control basico" toggleGroup="$grupoControl"/>
+    <RadioButton fx:id="radioControlAutonomo" text="Control autonomo" toggleGroup="$grupoControl"/>
+</VBox>
+
             </VBox>
+            
         </ScrollPane>
     </left>
 
