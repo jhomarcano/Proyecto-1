@@ -93,7 +93,11 @@ public class DroneController implements Initializable {
 
     /** Columna que muestra el atributo propio de cada subclase. */
     @FXML private TableColumn<Drone, String> colEspecifico;
-
+    
+    @FXML private javafx.scene.control.RadioButton radioSinControl;
+    @FXML private javafx.scene.control.RadioButton radioControlBasico;
+    @FXML private javafx.scene.control.RadioButton radioControlAutonomo;
+    
     /** Servicio que concentra la logica de negocio. */
     private final DroneService droneService = new DroneService();
 
@@ -199,7 +203,13 @@ public class DroneController implements Initializable {
             txtDescripcionBateria.clear();
         }
     }
-
+    
+    private String obtenerTipoControlSeleccionado() {
+        if (radioControlBasico.isSelected()) return "BASICO";
+        if (radioControlAutonomo.isSelected()) return "AUTONOMO";
+        return null;
+    }
+    
     /**
      * Recarga la tabla con los drones registrados en la base de datos.
      * <p>
@@ -245,7 +255,14 @@ public class DroneController implements Initializable {
                     chkDeteccionTermica.isSelected());
 
             refrescarTabla();
-
+            
+            String tipoControlElegido = obtenerTipoControlSeleccionado();
+            if (tipoControlElegido != null) {
+                String descripcionControl = droneService.asignarControl(creado, tipoControlElegido);
+                VentanaControlDron.mostrar(creado, descripcionControl,
+                        tablaDrones.getScene().getWindow());
+            }
+            
             if (conBateria) {
                 Componente base = droneService.envolver(creado);
                 Componente decorado = droneService.envolverConBateria(base, descripcionBateria);

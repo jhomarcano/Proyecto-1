@@ -229,5 +229,42 @@ public class DroneService {
         }
         return new BateriaAdicional(componente, descripcionBateria.trim());
     }
+    
+    /**
+     * Asigna un modo de control (Bridge) a un drone y lo guarda solo en
+     * memoria (ver {@link RegistroControlDron}); nunca en la base de datos.
+     *
+     * @param drone       drone seleccionado; no puede ser {@code null}
+     * @param tipoControl {@code "BASICO"} o {@code "AUTONOMO"}
+     * @return la descripcion del control aplicado
+     * @throws DronValidacionException si no hay drone o el tipo no existe
+     */
+    public String asignarControl(Drone drone, String tipoControl) {
+        if (drone == null) {
+            throw new DronValidacionException("Selecciona un drone de la tabla para asignarle un control.");
+        }
+        ControlDron implementor;
+        switch (tipoControl) {
+            case "BASICO":
+                implementor = new ControlBasico();
+                break;
+            case "AUTONOMO":
+                implementor = new ControlAutonomo();
+                break;
+            default:
+                throw new DronValidacionException("Tipo de control no soportado: " + tipoControl);
+        }
+        return new ModoControlDron(implementor).asignar(drone);
+    }
+
+    /**
+     * Consulta si un drone ya tiene un control asignado en memoria.
+     *
+     * @param drone drone a consultar
+     * @return la descripcion guardada, o {@code null} si no tiene control
+     */
+    public String consultarControl(Drone drone) {
+        return drone == null ? null : RegistroControlDron.consultar(drone.getSerial());
+    }
 }
 
