@@ -1,7 +1,7 @@
 package co.edu.poli.sw2.controlador;
 
 import co.edu.poli.sw2.modelo.Drone;
-import co.edu.poli.sw2.service.Componente;
+import co.edu.poli.sw2.service.decorator.Componente;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
