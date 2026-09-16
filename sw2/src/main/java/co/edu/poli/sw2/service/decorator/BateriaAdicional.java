@@ -1,4 +1,4 @@
-package co.edu.poli.sw2.service;
+package co.edu.poli.sw2.service.decorator;
 
 /**
  * Decorador concreto del patron <b>Decorator</b>.

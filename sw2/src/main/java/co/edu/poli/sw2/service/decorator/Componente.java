@@ -1,4 +1,4 @@
-package co.edu.poli.sw2.service;
+package co.edu.poli.sw2.service.decorator;
 
 /**
  * Contrato comun del patron <b>Decorator</b>.

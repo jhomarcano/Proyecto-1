@@ -1,4 +1,4 @@
-package co.edu.poli.sw2.service;
+package co.edu.poli.sw2.service.factory;
 
 import co.edu.poli.sw2.modelo.Agricultura;
 import co.edu.poli.sw2.modelo.Drone;

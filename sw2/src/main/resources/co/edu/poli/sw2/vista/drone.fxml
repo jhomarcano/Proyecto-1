@@ -4,147 +4,127 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="co.edu.poli.sw2.controlador.DroneController"
-            stylesheets="@styles.css"
-            prefHeight="700.0" prefWidth="1100.0">
+<BorderPane prefHeight="700.0" prefWidth="1100.0" 
+            stylesheets="@styles.css" 
+            xmlns="http://javafx.com/javafx" 
+            xmlns:fx="http://javafx.com/fxml" 
+            fx:controller="co.edu.poli.sw2.controlador.DroneController">
 
     <!-- ============ BARRA SUPERIOR ============ -->
     <top>
-        <VBox styleClass="barra-titulo" spacing="2">
-            <Label text="Gestion de Drones" styleClass="titulo-app"/>
-            <Label text="Sistema CRUD sobre PostgreSQL  |  Ingenieria de Software 2"
-                   styleClass="subtitulo-app"/>
+        <VBox spacing="2" styleClass="barra-titulo">
+            <Label styleClass="titulo-app" text="Gestion de Drones" />
+            <Label styleClass="subtitulo-app" text="Sistema CRUD sobre PostgreSQL  |  Ingenieria de Software 2" />
         </VBox>
     </top>
 
     <!-- ============ PANEL IZQUIERDO ============ -->
     <left>
-        <ScrollPane fitToWidth="true" prefWidth="345.0" hbarPolicy="NEVER">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" prefWidth="345.0">
             <VBox spacing="14">
-                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
+                <padding>
+                    <Insets bottom="16" left="16" right="16" top="16" />
+                </padding>
 
-
+                <!-- Datos principales -->
                 <VBox spacing="9" styleClass="tarjeta">
-                    <Label text="DATOS DEL DRONE" styleClass="titulo-seccion"/>
+                    <Label styleClass="titulo-seccion" text="DATOS DEL DRONE" />
 
-                    <Label text="Tipo de dron" styleClass="etiqueta-campo"/>
-                    <ComboBox fx:id="cmbTipo" maxWidth="Infinity"/>
+                    <Label styleClass="etiqueta-campo" text="Tipo de dron" />
+                    <ComboBox fx:id="cmbTipo" maxWidth="Infinity" />
 
-                    <Label text="Serial" styleClass="etiqueta-campo"/>
-                    <TextField fx:id="txtSerial" promptText="Ej: SN-00123"/>
+                    <Label styleClass="etiqueta-campo" text="Serial" />
+                    <TextField fx:id="txtSerial" promptText="Ej: SN-00123" />
 
-                    <Label text="Fabricante" styleClass="etiqueta-campo"/>
-                    <TextField fx:id="txtFabricante" promptText="Ej: DJI"/>
+                    <Label styleClass="etiqueta-campo" text="Fabricante" />
+                    <TextField fx:id="txtFabricante" promptText="Ej: DJI" />
 
-                    <Label text="Modelo" styleClass="etiqueta-campo"/>
-                    <TextField fx:id="txtModelo" promptText="Ej: Mavic 3"/>
+                    <Label styleClass="etiqueta-campo" text="Modelo" />
+                    <TextField fx:id="txtModelo" promptText="Ej: Mavic 3" />
 
-                    <Label text="Peso (kg)" styleClass="etiqueta-campo"/>
-                    <TextField fx:id="txtPeso" promptText="Ej: 0.9"/>
+                    <Label styleClass="etiqueta-campo" text="Peso (kg)" />
+                    <TextField fx:id="txtPeso" promptText="Ej: 0.9" />
 
-                    <Label fx:id="lblCapacidad" text="Capacidad del tanque (L)"
-                           styleClass="etiqueta-campo"/>
-                    <TextField fx:id="txtCapacidad" promptText="Ej: 10.5"/>
+                    <Label fx:id="lblCapacidad" styleClass="etiqueta-campo" text="Capacidad del tanque (L)" />
+                    <TextField fx:id="txtCapacidad" promptText="Ej: 10.5" />
 
-                    <CheckBox fx:id="chkDeteccionTermica" text="Deteccion termica"/>
+                    <CheckBox fx:id="chkDeteccionTermica" text="Deteccion termica" />
                 </VBox>
 
-
+                <!-- Complementos -->
                 <VBox spacing="8" styleClass="tarjeta">
-                    <Label text="COMPLEMENTOS" styleClass="titulo-seccion"/>
-                    <CheckBox fx:id="chkBateriaAdicional" text="Bateria adicional (Decorator)"/>
-                    <TextField fx:id="txtDescripcionBateria"
-                               promptText="Ej: Bateria LiPo 5000mAh de repuesto"
-                               disable="true"/>
+                    <Label styleClass="titulo-seccion" text="COMPLEMENTOS" />
+                    <CheckBox fx:id="chkBateriaAdicional" text="Bateria adicional (Decorator)" />
+                    <TextField fx:id="txtDescripcionBateria" disable="true" promptText="Ej: Bateria LiPo 5000mAh de repuesto" />
                 </VBox>
 
-
-                <VBox spacing="10" styleClass="tarjeta">
-                    <Label text="OPERACIONES" styleClass="titulo-seccion"/>
-
-                    <FlowPane hgap="9" vgap="9" prefWrapLength="280.0">
-                    <GridPane hgap="9" vgap="9" maxWidth="Infinity">
-                        <columnConstraints>
-                            <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
-                            <ColumnConstraints percentWidth="50.0" hgrow="ALWAYS"/>
-                        </columnConstraints>
-
-                        <Button fx:id="btnAgregar" text="Agregar"
-                                onAction="#agregarDrone" maxWidth="Infinity"
-                                styleClass="boton,boton-primario"
-                                GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                        <Button fx:id="btnModificar" text="Modificar"
-                                onAction="#modificarDrone" maxWidth="Infinity"
-                                styleClass="boton,boton-secundario"
-                                GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-                        <Button fx:id="btnEliminar" text="Eliminar"
-                                onAction="#eliminarDrone" maxWidth="Infinity"
-                                styleClass="boton,boton-peligro"
-                                GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                        <Button fx:id="btnLimpiar" text="Limpiar"
-                                onAction="#limpiarFormulario" maxWidth="Infinity"
-                                styleClass="boton,boton-neutro"
-                                GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                    </GridPane>
-                    </FlowPane>
+                <!-- Control del Drone -->
+                <VBox spacing="8" styleClass="tarjeta">
+                    <Label styleClass="titulo-seccion" text="CONTROL DEL DRONE (Bridge)" />
+                    <fx:define>
+                        <ToggleGroup fx:id="grupoControl" />
+                    </fx:define>
+                    <RadioButton fx:id="radioSinControl" selected="true" text="Sin control" toggleGroup="$grupoControl" />
+                    <RadioButton fx:id="radioControlBasico" text="Control basico" toggleGroup="$grupoControl" />
+                    <RadioButton fx:id="radioControlAutonomo" text="Control autonomo" toggleGroup="$grupoControl" />
                 </VBox>
 
-   
+                <!-- Patrones de Diseño -->
                 <VBox spacing="10" styleClass="tarjeta">
-                    <Label text="PATRONES DE DISENO" styleClass="titulo-seccion"/>
-
+                    <Label styleClass="titulo-seccion" text="PATRONES DE DISENO" />
                     <VBox spacing="8">
-                        <Button fx:id="btnAleatorio" text="Generar Vigilancia (Builder)"
-                                onAction="#generarVigilanciaAleatoria"
-                                maxWidth="Infinity" styleClass="boton,boton-patron"/>
-                        <Button fx:id="btnClonar" text="Clonar drone (Prototype)"
-                                onAction="#clonarDrone"
-                                maxWidth="Infinity" styleClass="boton,boton-patron"/>
+                        <Button fx:id="btnAleatorio" maxWidth="Infinity" onAction="#generarVigilanciaAleatoria" styleClass="boton,boton-patron" text="Generar Vigilancia (Builder)" />
+                        <Button fx:id="btnClonar" maxWidth="Infinity" onAction="#clonarDrone" styleClass="boton,boton-patron" text="Clonar drone (Prototype)" />
                     </VBox>
                 </VBox>
 
-                <Label fx:id="lblMensaje" wrapText="true" styleClass="mensaje-error"/>
-                
-                
-                            <VBox spacing="8" styleClass="tarjeta">
-    <Label text="CONTROL DEL DRONE (Bridge)" styleClass="titulo-seccion"/>
-    <fx:define>
-        <ToggleGroup fx:id="grupoControl"/>
-    </fx:define>
-    <RadioButton fx:id="radioSinControl" text="Sin control" toggleGroup="$grupoControl" selected="true"/>
-    <RadioButton fx:id="radioControlBasico" text="Control basico" toggleGroup="$grupoControl"/>
-    <RadioButton fx:id="radioControlAutonomo" text="Control autonomo" toggleGroup="$grupoControl"/>
-</VBox>
+                <!-- Mensaje de Error/Estado -->
+                <Label fx:id="lblMensaje" styleClass="mensaje-error" wrapText="true" />
+
+                <!-- Operaciones -->
+                <VBox spacing="10" styleClass="tarjeta">
+                    <Label styleClass="titulo-seccion" text="OPERACIONES" />
+                    <GridPane hgap="9" maxWidth="Infinity" vgap="9">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                            <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0" />
+                        </columnConstraints>
+
+                        <Button fx:id="btnAgregar" maxWidth="Infinity" onAction="#agregarDrone" styleClass="boton,boton-primario" text="Agregar" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Button fx:id="btnModificar" maxWidth="Infinity" onAction="#modificarDrone" styleClass="boton,boton-secundario" text="Modificar" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Button fx:id="btnEliminar" maxWidth="Infinity" onAction="#eliminarDrone" styleClass="boton,boton-peligro" text="Eliminar" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Button fx:id="btnLimpiar" maxWidth="Infinity" onAction="#limpiarFormulario" styleClass="boton,boton-neutro" text="Limpiar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    </GridPane>
+                </VBox>
 
             </VBox>
-            
         </ScrollPane>
     </left>
 
-    <!-- ============ TABLA ============ -->
+    <!-- ============ TABLA CENTRAL ============ -->
     <center>
         <VBox spacing="10" styleClass="tarjeta">
-            <BorderPane.margin><Insets top="16" right="16" bottom="16" left="0"/></BorderPane.margin>
+            <BorderPane.margin>
+                <Insets bottom="16" left="0" right="16" top="16" />
+            </BorderPane.margin>
 
-            <Label text="DRONES REGISTRADOS" styleClass="titulo-seccion"/>
+            <Label styleClass="titulo-seccion" text="DRONES REGISTRADOS" />
 
             <TableView fx:id="tablaDrones" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="50.0"/>
-                    <TableColumn fx:id="colTipo" text="Tipo" prefWidth="115.0"/>
-                    <TableColumn fx:id="colSerial" text="Serial" prefWidth="110.0"/>
-                    <TableColumn fx:id="colFabricante" text="Fabricante" prefWidth="115.0"/>
-                    <TableColumn fx:id="colModelo" text="Modelo" prefWidth="110.0"/>
-                    <TableColumn fx:id="colPeso" text="Peso (kg)" prefWidth="85.0"/>
-                    <TableColumn fx:id="colEspecifico" text="Atributo especifico" prefWidth="150.0"/>
+                    <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
+                    <TableColumn fx:id="colTipo" prefWidth="115.0" text="Tipo" />
+                    <TableColumn fx:id="colSerial" prefWidth="110.0" text="Serial" />
+                    <TableColumn fx:id="colFabricante" prefWidth="115.0" text="Fabricante" />
+                    <TableColumn fx:id="colModelo" prefWidth="110.0" text="Modelo" />
+                    <TableColumn fx:id="colPeso" prefWidth="85.0" text="Peso (kg)" />
+                    <TableColumn fx:id="colEspecifico" prefWidth="150.0" text="Atributo especifico" />
                 </columns>
                 <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                 </columnResizePolicy>
                 <placeholder>
-                    <Label text="No hay drones registrados todavia."/>
+                    <Label text="No hay drones registrados todavia." />
                 </placeholder>
             </TableView>
         </VBox>
