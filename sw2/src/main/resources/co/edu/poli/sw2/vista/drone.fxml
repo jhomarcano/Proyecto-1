@@ -75,9 +75,9 @@
                     <VBox spacing="8">
                         <Button fx:id="btnAleatorio" maxWidth="Infinity" onAction="#generarVigilanciaAleatoria" styleClass="boton,boton-patron" text="Generar Vigilancia (Builder)" />
                         <Button fx:id="btnClonar" maxWidth="Infinity" onAction="#clonarDrone" styleClass="boton,boton-patron" text="Clonar drone (Prototype)" />
+                        <Button fx:id="btnExportarMision" maxWidth="Infinity" onAction="#exportarMisionJson" styleClass="boton,boton-patron" text="Exportar Mision (Adapter)" />
                     </VBox>
                 </VBox>
-
                 <!-- Mensaje de Error/Estado -->
                 <Label fx:id="lblMensaje" styleClass="mensaje-error" wrapText="true" />
 

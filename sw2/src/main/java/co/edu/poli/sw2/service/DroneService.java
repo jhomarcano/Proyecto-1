@@ -20,6 +20,9 @@ import co.edu.poli.sw2.service.bridge.ControlBasico;
 import co.edu.poli.sw2.service.bridge.ControlAutonomo;
 import co.edu.poli.sw2.service.bridge.ModoControlDron;
 import co.edu.poli.sw2.service.bridge.RegistroControlDron;
+import co.edu.poli.sw2.modelo.Mision;
+import co.edu.poli.sw2.service.adapter.AdaptadorMision;
+import co.edu.poli.sw2.service.adapter.MisionJsonAdapter;
 
 import java.util.List;
 
@@ -276,6 +279,23 @@ public class DroneService {
      */
     public String consultarControl(Drone drone) {
         return drone == null ? null : RegistroControlDron.consultar(drone.getSerial());
+    }
+    
+    /** Adapter que exporta misiones a formato JSON. */
+    private final AdaptadorMision adaptadorMision = new MisionJsonAdapter();
+
+    /**
+     * Exporta una mision a un archivo JSON aplicando el patron Adapter.
+     * <p>
+     * El servicio no sabe como se escribe el archivo: solo conoce el
+     * contrato {@link AdaptadorMision}. Nada de esto toca la base de
+     * datos ni el DAO de drones.
+     *
+     * @param mision mision a exportar
+     * @return la ruta del archivo JSON generado
+     */
+    public String exportarMisionAJson(Mision mision) {
+        return adaptadorMision.exportar(mision);
     }
 }
 
