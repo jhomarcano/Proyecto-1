@@ -12,6 +12,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import co.edu.poli.sw2.service.decorator.Componente;
+import co.edu.poli.sw2.service.Composite.Sensorcomposite;
+import co.edu.poli.sw2.service.Composite.Sensorcompositedemo;
 
 
 import java.net.URL;
@@ -448,6 +450,20 @@ public class DroneController implements Initializable {
         } catch (DronException ex) {
             mostrarMensaje(ex.getMessage(), true);
             ManejadorErroresUI.mostrar(ex);
+        } catch (Exception ex) {
+            ManejadorErroresUI.mostrarInesperado(ex);
+        }
+    }
+    
+    /**
+     * Abre la ventana con el organigrama del patron Composite aplicado a
+     * la jerarquia de tipos de sensor.
+     */
+    @FXML
+    private void mostrarComposite() {
+        try {
+            Sensorcomposite raiz = Sensorcompositedemo.construirArbolSensores();
+            VentanaSensorComposite.mostrar(raiz, tablaDrones.getScene().getWindow());
         } catch (Exception ex) {
             ManejadorErroresUI.mostrarInesperado(ex);
         }
