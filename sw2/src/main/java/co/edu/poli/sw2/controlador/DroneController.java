@@ -12,7 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import co.edu.poli.sw2.service.decorator.Componente;
-
+import co.edu.poli.sw2.modelo.Mision;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -450,6 +450,29 @@ public class DroneController implements Initializable {
             ManejadorErroresUI.mostrar(ex);
         } catch (Exception ex) {
             ManejadorErroresUI.mostrarInesperado(ex);
+        }
+    }
+    
+    
+    /** Mision de demostracion, precargada para evidenciar el patron Adapter. */
+    private final Mision misionDemo = new Mision(
+            1, "Inspeccion Linea Electrica", "Subestacion Norte, Bogota", "2026-09-20");
+    
+    
+    /**
+     * Exporta la mision de demostracion a un archivo JSON usando el
+     * patron Adapter y muestra la ruta generada.
+     * <p>
+     * No toca la base de datos: la mision usada aqui es un dato fijo,
+     * ya que el CRUD de misiones no hace parte del alcance actual.
+     */
+    @FXML
+    private void exportarMisionJson() {
+        try {
+            String ruta = droneService.exportarMisionAJson(misionDemo);
+            mostrarMensaje("Mision exportada a JSON en: " + ruta, false);
+        } catch (Exception ex) {
+            mostrarMensaje("No fue posible exportar la mision: " + ex.getMessage(), true);
         }
     }
 }
