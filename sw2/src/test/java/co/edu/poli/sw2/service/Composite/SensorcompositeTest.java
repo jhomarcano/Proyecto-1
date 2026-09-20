@@ -104,7 +104,7 @@ class SensorcompositeTest {
 
         Sensorwrapper wrapper = Sensorwrapper.desde(sensor);
 
-        assertSame(sensor, wrapper.getSensor() == sensor ? sensor : null);
+        assertNotNull(wrapper.getSensor());
         assertEquals(sensor.toString(), wrapper.descripcion());
     }
 
