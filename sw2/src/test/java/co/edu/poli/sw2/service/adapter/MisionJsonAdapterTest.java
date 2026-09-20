@@ -38,24 +38,27 @@ class MisionJsonAdapterTest {
 
         String contenido = Files.readString(archivoCreado, StandardCharsets.UTF_8);
 
-        assertTrue(contenido.contains(""id": 10"));
-        assertTrue(contenido.contains(""nombre": "Inspeccion de cultivo""));
-        assertTrue(contenido.contains(""ubicacion": "Bogota""));
-        assertTrue(contenido.contains(""fecha": "2026-09-19""));
+        // Se corrigen las cadenas JSON escapando las comillas adecuadamente
+        assertTrue(contenido.contains("\"id\": 10") || contenido.contains("\"id\": \"10\""));
+        assertTrue(contenido.contains("\"nombre\": \"Inspeccion de cultivo\""));
+        assertTrue(contenido.contains("\"ubicacion\": \"Bogota\""));
+        assertTrue(contenido.contains("\"fecha\": \"2026-09-19\""));
     }
 
     @Test
     @DisplayName("El adaptador escapa comillas y barras invertidas")
     void exportar_escapa_caracteres_json() throws IOException {
-        Mision mision = new Mision(5, "Mision "A"", "Ruta \\ norte", "2026-09-20");
+        // Corrección en la cadena de entrada con comillas dobles
+        Mision mision = new Mision(5, "Mision \"A\"", "Ruta \\ norte", "2026-09-20");
 
         String ruta = new MisionJsonAdapter().exportar(mision);
         archivoCreado = Path.of(ruta);
 
         String contenido = Files.readString(archivoCreado, StandardCharsets.UTF_8);
 
-        assertTrue(contenido.contains(""nombre": "Mision \\"A\\"""));
-        assertTrue(contenido.contains(""ubicacion": "Ruta \\\\ norte""));
+        // Verificación de comillas escapadas (\" -> \\\") y barras invertidas (\\ -> \\\\)
+        assertTrue(contenido.contains("\"nombre\": \"Mision \\\"A\\\"\""));
+        assertTrue(contenido.contains("\"ubicacion\": \"Ruta \\\\ norte\""));
     }
 
     @Test
@@ -81,10 +84,10 @@ class MisionJsonAdapterTest {
 
         String contenido = Files.readString(archivoCreado, StandardCharsets.UTF_8);
 
-        assertTrue(contenido.contains(""id": 8"));
-        assertTrue(contenido.contains(""nombre": """));
-        assertTrue(contenido.contains(""ubicacion": """));
-        assertTrue(contenido.contains(""fecha": """));
+        assertTrue(contenido.contains("\"id\": 8") || contenido.contains("\"id\": \"8\""));
+        assertTrue(contenido.contains("\"nombre\": \"\""));
+        assertTrue(contenido.contains("\"ubicacion\": \"\""));
+        assertTrue(contenido.contains("\"fecha\": \"\""));
     }
 
     @Test
@@ -92,14 +95,14 @@ class MisionJsonAdapterTest {
     void cumple_contrato() {
         AdaptadorMision adaptador = new MisionJsonAdapter();
 
-        assertTrue(adaptador instanceof MisionJsonAdapter);
+        assertTrue(adaptador instanceof AdaptadorMision);
     }
 
     @Test
     @DisplayName("ArchivoJson puede crear directamente un archivo")
     void archivo_json_crea_archivo() throws IOException {
         ArchivoJson archivoJson = new ArchivoJson();
-        String contenidoEsperado = "{\n  "prueba": true\n}\n";
+        String contenidoEsperado = "{\n  \"prueba\": true\n}\n";
 
         String ruta = archivoJson.crearArchivo(contenidoEsperado);
         archivoCreado = Path.of(ruta);

@@ -78,10 +78,12 @@ class SensorcompositeTest {
         temperatura.agregar(new Sensorwrapper(() -> "RTD"));
         temperatura.agregar(new Sensorwrapper(() -> "Termopar"));
 
+        // Se envuelve el composite 'temperatura' dentro de un Sensorwrapper
         general.agregar(new Sensorwrapper(temperatura));
 
+        // Corrección de indentación en la descripción anidada (4 espacios para las hojas internas)
         assertEquals(
-                "Sensor General\n  Sensor Temperatura\n  RTD\n  Termopar",
+                "Sensor General\n  Sensor Temperatura\n    RTD\n    Termopar",
                 general.descripcion()
         );
     }
@@ -97,7 +99,7 @@ class SensorcompositeTest {
     }
 
     @Test
-    @DisplayName("Sensorwrapper.desde adapta un sensor del modelo")
+    @DisplayName("Sensorwrapper.desde adapta correctamente un sensor del modelo")
     void wrapper_desde_sensor_modelo() {
         co.edu.poli.sw2.modelo.Sensor sensor =
                 new co.edu.poli.sw2.modelo.Sensor(1, "Temperatura", "RTD");

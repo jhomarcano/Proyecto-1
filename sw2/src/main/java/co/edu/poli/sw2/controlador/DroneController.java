@@ -467,7 +467,8 @@ public class DroneController implements Initializable {
             VentanaSensorComposite.mostrar(raiz, tablaDrones.getScene().getWindow());
         } catch (Exception ex) {
             ManejadorErroresUI.mostrarInesperado(ex);
-    
+        }
+    }
     /** Mision de demostracion, precargada para evidenciar el patron Adapter. */
     private final Mision misionDemo = new Mision(
             1, "Inspeccion Linea Electrica", "Subestacion Norte, Bogota", "2026-09-20");
