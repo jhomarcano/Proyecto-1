@@ -7,6 +7,7 @@ co.edu.poli.sw2.service
 co.edu.poli.sw2.service.adapter
 co.edu.poli.sw2.service.bridge
 co.edu.poli.sw2.service.builder
+co.edu.poli.sw2.service.Composite
 co.edu.poli.sw2.service.decorator
 co.edu.poli.sw2.service.factory
 co.edu.poli.sw2.service.prototype
