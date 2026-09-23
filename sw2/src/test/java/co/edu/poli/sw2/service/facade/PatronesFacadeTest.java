@@ -20,7 +20,7 @@ class PatronesFacadeTest {
 
     @Test
     @DisplayName("Builder se ejecuta a traves de la fachada")
-    void builder_aTravésDeLaFachada() {
+    void builder_aTravesDeLaFachada() {
         Vigilancia esperado = new Vigilancia(
                 0, "VIG-FACADE", "DJI", "Mavic 3", 1.2, true);
 
@@ -39,7 +39,7 @@ class PatronesFacadeTest {
 
     @Test
     @DisplayName("Prototype se ejecuta a traves de la fachada")
-    void prototype_aTravésDeLaFachada() {
+    void prototype_aTravesDeLaFachada() {
         Drone original = new Vigilancia(
                 10, "SN-1", "Autel", "EVO", 1.0, true);
 
@@ -55,7 +55,7 @@ class PatronesFacadeTest {
 
     @Test
     @DisplayName("Composite se ejecuta a traves de la fachada")
-    void composite_aTravésDeLaFachada() {
+    void composite_aTravesDeLaFachada() {
         PatronesFacade facade = new PatronesFacade(
                 new DroneService(), new DronePrototype(), mision -> "no-usado");
 
@@ -69,7 +69,7 @@ class PatronesFacadeTest {
 
     @Test
     @DisplayName("Adapter se ejecuta a traves de la fachada")
-    void adapter_aTravésDeLaFachada() {
+    void adapter_aTravesDeLaFachada() {
         Mision mision = new Mision(
                 1, "Inspeccion", "Bogota", "2026-09-20");
 
