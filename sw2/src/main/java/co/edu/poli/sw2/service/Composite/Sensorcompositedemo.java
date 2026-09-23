@@ -33,13 +33,17 @@ public final class Sensorcompositedemo {
         temperatura.agregar(hoja("RTD"));
  
         Sensorcomposite camara = new Sensorcomposite("Sensor Camara");
-        camara.agregar(hoja("Sensor CMOS"));
-        camara.agregar(hoja("Sensor CCD"));
+
  
         Sensorcomposite digital = new Sensorcomposite("Sensor Digital");
         digital.agregar(hoja("SPI"));
-        digital.agregar(hoja("UART"));
- 
+        Sensorcomposite UART = new Sensorcomposite("UART");
+        digital.agregar(rama(UART));
+        
+        UART.agregar(hoja("Sensor CMOS"));
+        UART.agregar(hoja("Sensor CCD"));
+        
+        
         Sensorcomposite sonido = new Sensorcomposite("Sensor Sonido");
         sonido.agregar(hoja("Sensor Analogico"));
         sonido.agregar(rama(digital));
