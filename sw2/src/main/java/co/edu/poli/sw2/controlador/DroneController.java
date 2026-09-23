@@ -13,7 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import co.edu.poli.sw2.service.decorator.Componente;
 import co.edu.poli.sw2.service.Composite.Sensorcomposite;
-import co.edu.poli.sw2.service.Composite.Sensorcompositedemo;
+import co.edu.poli.sw2.service.facade.PatronesFacade;
 
 import co.edu.poli.sw2.modelo.Mision;
 
@@ -104,6 +104,12 @@ public class DroneController implements Initializable {
     
     /** Servicio que concentra la logica de negocio. */
     private final DroneService droneService = new DroneService();
+
+    /**
+     * Fachada de entrada para Builder, Prototype, Composite y Adapter.
+     * El controlador no accede directamente a esos subsistemas.
+     */
+    private final PatronesFacade patronesFacade = new PatronesFacade();
 
     /** Dron actualmente seleccionado en la tabla; {@code null} si no hay seleccion. */
     private Drone droneSeleccionado;
@@ -413,7 +419,7 @@ public class DroneController implements Initializable {
     @FXML
     private void generarVigilanciaAleatoria() {
         try {
-            Vigilancia aleatorio = droneService.generarVigilanciaAleatoria();
+            Vigilancia aleatorio = patronesFacade.generarVigilanciaAleatoria();
 
             limpiarFormulario();
             cmbTipo.getSelectionModel().select(TIPO_VIGILANCIA);
@@ -443,7 +449,7 @@ public class DroneController implements Initializable {
     private void clonarDrone() {
         try {
             Drone seleccionado = tablaDrones.getSelectionModel().getSelectedItem();
-            Drone clon = droneService.clonar(seleccionado);
+            Drone clon = patronesFacade.clonar(seleccionado);
 
             VentanaClonacion.mostrar(seleccionado, clon, tablaDrones.getScene().getWindow());
 
@@ -463,7 +469,7 @@ public class DroneController implements Initializable {
     @FXML
     private void mostrarComposite() {
         try {
-            Sensorcomposite raiz = Sensorcompositedemo.construirArbolSensores();
+            Sensorcomposite raiz = patronesFacade.construirArbolSensores();
             VentanaSensorComposite.mostrar(raiz, tablaDrones.getScene().getWindow());
         } catch (Exception ex) {
             ManejadorErroresUI.mostrarInesperado(ex);
@@ -484,7 +490,7 @@ public class DroneController implements Initializable {
     @FXML
     private void exportarMisionJson() {
         try {
-            String ruta = droneService.exportarMisionAJson(misionDemo);
+            String ruta = patronesFacade.exportarMisionAJson(misionDemo);
             mostrarMensaje("Mision exportada a JSON en: " + ruta, false);
         } catch (Exception ex) {
             mostrarMensaje("No fue posible exportar la mision: " + ex.getMessage(), true);
