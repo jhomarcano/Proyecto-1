@@ -32,7 +32,8 @@ sw2/
 │   │   └── CatalogoRepositorio.java# Lectura de catálogos (Pilotos y Sensores)
 │   ├── service/
 │   │   ├── DroneService.java       # Lógica de negocio: valida y delega en el DAO
-│   │   └── ValidadorDrone.java     # Reglas de validación de serial/fabricante/peso
+│   │   ├── ValidadorDrone.java     # Reglas de validación de serial/fabricante/peso
+│   │   └── facade/PatronesFacade.java # Punto único de entrada a Builder/Prototype/Composite/Adapter
 │   └── exception/
 │       ├── DronException.java              # Excepción base del dominio
 │       ├── DronValidacionException.java    # Datos inválidos
@@ -44,6 +45,40 @@ sw2/
 │   └── co/edu/poli/sw2/vista/drone.fxml  # Vista JavaFX del CRUD
 └── module-info.java                 # Módulos Java requeridos (javafx.*, java.sql, postgresql)
 ```
+
+
+### Flujo de los patrones de diseño mediante Facade
+
+Las cuatro acciones de patrones visibles en la interfaz pasan ahora por un unico punto de entrada:
+
+1. El usuario hace clic en Builder, Prototype, Composite o Adapter en drone.fxml.
+2. DroneController recibe el evento, pero no coordina directamente el subsistema del patron.
+3. El controlador delega en PatronesFacade.
+4. PatronesFacade ejecuta la operacion correspondiente:
+   - Builder -> DroneService.generarVigilanciaAleatoria() -> VigilanciaGeneradorAleatorio -> VigilanciaBuilder.
+   - Prototype -> DronePrototype.clonar(...).
+   - Composite -> Sensorcompositedemo.construirArbolSensores().
+   - Adapter -> MisionJsonAdapter.exportar(...) -> ArchivoJson.
+5. El resultado vuelve a DroneController, que actualiza el formulario o abre la ventana correspondiente.
+
+El flujo queda conceptualmente asi:
+
+    Usuario
+       |
+       v
+    drone.fxml
+       |
+       v
+    DroneController
+       |
+       v
+    PatronesFacade
+       +----> Builder ----> DroneService ----> VigilanciaBuilder
+       +----> Prototype -> DronePrototype
+       +----> Composite -> Sensorcompositedemo -> Sensorcomposite
+       +----> Adapter ---> MisionJsonAdapter -> ArchivoJson
+
+La idea de la Fachada es que la interfaz grafica conozca una sola entrada para estas cuatro operaciones, mientras que los detalles de cada patron permanecen encapsulados en sus respectivos subsistemas.
 
 ### Flujo de una operación (ejemplo: agregar un drone)
 1. El usuario llena el formulario en `drone.fxml` y presiona **Agregar**.
