@@ -77,6 +77,7 @@
                         <Button fx:id="btnClonar" maxWidth="Infinity" onAction="#clonarDrone" styleClass="boton,boton-patron" text="Clonar drone (Prototype)" />
                         <Button fx:id="btnComposite" maxWidth="Infinity" onAction="#mostrarComposite" styleClass="boton,boton-patron" text="Ver jerarquia de sensores (Composite)" />
                         <Button fx:id="btnExportarMision" maxWidth="Infinity" onAction="#exportarMisionJson" styleClass="boton,boton-patron" text="Exportar Mision (Adapter)" />
+                        <Button fx:id="btnEjecutarTodos" maxWidth="Infinity" onAction="#ejecutarTodosLosPatrones" styleClass="boton,boton-patron" text="Ejecutar todos los patrones (Facade)" />
                     </VBox>
                 </VBox>
                 <!-- Mensaje de Error/Estado -->

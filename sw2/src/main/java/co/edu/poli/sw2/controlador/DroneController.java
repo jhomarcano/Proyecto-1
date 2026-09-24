@@ -14,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import co.edu.poli.sw2.service.decorator.Componente;
 import co.edu.poli.sw2.service.Composite.Sensorcomposite;
 import co.edu.poli.sw2.service.Composite.Sensorcompositedemo;
+import co.edu.poli.sw2.service.facade.*;
 
 import co.edu.poli.sw2.modelo.Mision;
 
@@ -104,6 +105,8 @@ public class DroneController implements Initializable {
     
     /** Servicio que concentra la logica de negocio. */
     private final DroneService droneService = new DroneService();
+    
+    private final PatronesFacade patronesFacade = new PatronesFacade();
 
     /** Dron actualmente seleccionado en la tabla; {@code null} si no hay seleccion. */
     private Drone droneSeleccionado;
@@ -469,6 +472,60 @@ public class DroneController implements Initializable {
             ManejadorErroresUI.mostrarInesperado(ex);
         }
     }
+    
+    /**
+     * Ejecuta Builder, Prototype, Composite y Adapter
+     * mediante una sola llamada a la fachada.
+     *
+     * Los cuatro patrones siguen teniendo sus botones
+     * individuales y continúan funcionando de forma independiente.
+     */
+    @FXML
+    private void ejecutarTodosLosPatrones() {
+        try {
+            PatronesFacade.EjecucionCompleta resultado =
+                    patronesFacade.ejecutarTodos(misionDemo);
+            // =====================================================
+            // BUILDER + PROTOTYPE
+            // =====================================================
+            VentanaClonacion.mostrar(
+                    resultado.getVigilanciaConstruida(),
+                    resultado.getClon(),
+                    tablaDrones.getScene().getWindow()
+            );
+            // =====================================================
+            // COMPOSITE
+            // =====================================================
+            VentanaSensorComposite.mostrar(
+                    resultado.getArbolSensores(),
+                    tablaDrones.getScene().getWindow()
+            );
+            // =====================================================
+            // ADAPTER
+            // =====================================================
+            mostrarMensaje(
+                    "Facade ejecuto Builder + Prototype + Composite + Adapter. "
+                    + "JSON generado en: "
+                    + resultado.getRutaJson(),
+                    false
+            );
+        } catch (DronException ex) {
+
+            mostrarMensaje(
+                    ex.getMessage(),
+                    true
+            );
+            ManejadorErroresUI.mostrar(ex);
+        } catch (Exception ex) {
+            mostrarMensaje(
+                    "No fue posible ejecutar todos los patrones: "
+                    + ex.getMessage(),
+                    true
+            );
+            ManejadorErroresUI.mostrarInesperado(ex);
+        }
+    }
+    
     /** Mision de demostracion, precargada para evidenciar el patron Adapter. */
     private final Mision misionDemo = new Mision(
             1, "Inspeccion Linea Electrica", "Subestacion Norte, Bogota", "2026-09-20");
