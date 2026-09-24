@@ -12,91 +12,186 @@ import co.edu.poli.sw2.service.prototype.DronePrototype;
 
 /**
  * Fachada de los patrones de diseño usados desde la interfaz grafica.
- * <p>
- * La vista/controlador no necesita conocer como se coordinan Builder,
- * Prototype, Composite y Adapter. Cuando el usuario pulsa uno de los
- * botones de patrones, {@code DroneController} entra por esta fachada
- * y ella delega la operacion en el subsistema correspondiente.
+ *
+ * La fachada permite:
+ *
+ * 1. Ejecutar Builder, Prototype, Composite y Adapter
+ *    de manera individual.
+ *
+ * 2. Ejecutar los cuatro patrones mediante una sola operacion:
+ *    ejecutarTodos().
+ *
+ * Los cuatro patrones NO dependen de esta clase.
+ * La fachada solamente los coordina.
  *
  * @author Alejandra Cano y Juan Rosero
  */
 public class PatronesFacade {
 
-    /** Servicio existente que concentra las operaciones de negocio de drones. */
     private final DroneService droneService;
-
-    /** Implementacion del patron Prototype. */
     private final DronePrototype dronePrototype;
-
-    /** Contrato Adapter usado para exportar misiones. */
     private final AdaptadorMision adaptadorMision;
 
     /**
-     * Crea la fachada con las implementaciones reales del proyecto.
+     * Constructor por defecto.
      */
     public PatronesFacade() {
-        this(new DroneService(), new DronePrototype(), new MisionJsonAdapter());
+        this(
+            new DroneService(),
+            new DronePrototype(),
+            new MisionJsonAdapter()
+        );
     }
 
     /**
-     * Constructor que permite inyectar los subsistemas.
-     * <p>
-     * Resulta util para pruebas unitarias y evita que la fachada quede
-     * acoplada a una unica implementacion del Adapter.
-     *
-     * @param droneService servicio de drones
-     * @param dronePrototype implementacion de Prototype
-     * @param adaptadorMision implementacion de Adapter
+     * Constructor con inyeccion de dependencias.
      */
-    public PatronesFacade(DroneService droneService,
-                          DronePrototype dronePrototype,
-                          AdaptadorMision adaptadorMision) {
-        if (droneService == null || dronePrototype == null || adaptadorMision == null) {
-            throw new IllegalArgumentException("Los componentes de la fachada no pueden ser nulos.");
+    public PatronesFacade(
+            DroneService droneService,
+            DronePrototype dronePrototype,
+            AdaptadorMision adaptadorMision) {
+
+        if (droneService == null ||
+            dronePrototype == null ||
+            adaptadorMision == null) {
+
+            throw new IllegalArgumentException(
+                "Los componentes de la fachada no pueden ser nulos."
+            );
         }
+
         this.droneService = droneService;
         this.dronePrototype = dronePrototype;
         this.adaptadorMision = adaptadorMision;
     }
 
+    // =========================================================
+    // BUILDER - funcionamiento independiente
+    // =========================================================
+
     /**
-     * Ejecuta la operacion correspondiente al patron Builder.
-     * <p>
-     * El generador existente usa internamente {@code VigilanciaBuilder}
-     * para ensamblar el dron de vigilancia.
-     *
-     * @return un dron de vigilancia nuevo, aun no persistido
+     * Ejecuta Builder de manera independiente.
      */
     public Vigilancia generarVigilanciaAleatoria() {
         return droneService.generarVigilanciaAleatoria();
     }
 
+    // =========================================================
+    // PROTOTYPE - funcionamiento independiente
+    // =========================================================
+
     /**
-     * Ejecuta la operacion correspondiente al patron Prototype.
-     *
-     * @param original dron que se desea clonar
-     * @return una copia independiente del dron
+     * Ejecuta Prototype de manera independiente.
      */
     public Drone clonar(Drone original) {
         return dronePrototype.clonar(original);
     }
 
+    // =========================================================
+    // COMPOSITE - funcionamiento independiente
+    // =========================================================
+
     /**
-     * Ejecuta la operacion correspondiente al patron Composite.
-     *
-     * @return raiz del arbol de sensores utilizado por la aplicacion
+     * Ejecuta Composite de manera independiente.
      */
     public Sensorcomposite construirArbolSensores() {
         return Sensorcompositedemo.construirArbolSensores();
     }
 
+    // =========================================================
+    // ADAPTER - funcionamiento independiente
+    // =========================================================
+
     /**
-     * Ejecuta la operacion correspondiente al patron Adapter.
-     *
-     * @param mision mision que se desea exportar
-     * @return ruta absoluta del archivo JSON generado
+     * Ejecuta Adapter de manera independiente.
      */
     public String exportarMisionAJson(Mision mision) {
         return adaptadorMision.exportar(mision);
+    }
+
+    // =========================================================
+    // FACADE - EJECUTA LOS CUATRO PATRONES
+    // =========================================================
+
+    /**
+     * Ejecuta Builder, Prototype, Composite y Adapter
+     * mediante una sola llamada.
+     *
+     * Flujo:
+     *
+     * 1. Builder genera una Vigilancia.
+     * 2. Prototype clona la Vigilancia (como subclase de Drone).
+     * 3. Composite construye el arbol de sensores.
+     * 4. Adapter exporta una Mision a JSON.
+     *
+     * Ninguno de los patrones conoce esta fachada.
+     */
+    public EjecucionCompleta ejecutarTodos(Mision mision) {
+
+        if (mision == null) {
+            throw new IllegalArgumentException(
+                "La mision no puede ser nula."
+            );
+        }
+
+        // 1. BUILDER
+        Vigilancia vigilanciaConstruida = generarVigilanciaAleatoria();
+
+        // 2. PROTOTYPE (Vigilancia hereda de Drone)
+        Drone clon = clonar((Drone) vigilanciaConstruida);
+
+        // 3. COMPOSITE
+        Sensorcomposite arbolSensores = construirArbolSensores();
+
+        // 4. ADAPTER
+        String rutaJson = exportarMisionAJson(mision);
+
+        // Retorno agrupado
+        return new EjecucionCompleta(
+                vigilanciaConstruida,
+                clon,
+                arbolSensores,
+                rutaJson
+        );
+    }
+
+    /**
+     * Contiene los resultados de ejecutar los cuatro patrones.
+     */
+    public static final class EjecucionCompleta {
+
+        private final Vigilancia vigilanciaConstruida;
+        private final Drone clon;
+        private final Sensorcomposite arbolSensores;
+        private final String rutaJson;
+
+        // Constructor interno visible para la fachada
+        EjecucionCompleta(
+                Vigilancia vigilanciaConstruida,
+                Drone clon,
+                Sensorcomposite arbolSensores,
+                String rutaJson) {
+
+            this.vigilanciaConstruida = vigilanciaConstruida;
+            this.clon = clon;
+            this.arbolSensores = arbolSensores;
+            this.rutaJson = rutaJson;
+        }
+
+        public Vigilancia getVigilanciaConstruida() {
+            return vigilanciaConstruida;
+        }
+
+        public Drone getClon() {
+            return clon;
+        }
+
+        public Sensorcomposite getArbolSensores() {
+            return arbolSensores;
+        }
+
+        public String getRutaJson() {
+            return rutaJson;
+        }
     }
 }
