@@ -23,6 +23,9 @@ import co.edu.poli.sw2.service.bridge.RegistroControlDron;
 import co.edu.poli.sw2.modelo.Mision;
 import co.edu.poli.sw2.service.adapter.AdaptadorMision;
 import co.edu.poli.sw2.service.adapter.MisionJsonAdapter;
+import co.edu.poli.sw2.service.proxy.DronProxy;
+import co.edu.poli.sw2.service.proxy.EliminadorDron;
+import co.edu.poli.sw2.service.proxy.EliminarDron;
 
 import java.util.List;
 
@@ -296,6 +299,30 @@ public class DroneService {
      */
     public String exportarMisionAJson(Mision mision) {
         return adaptadorMision.exportar(mision);
+    }
+    
+    /** Objeto real del patron Proxy: sabe borrar, pero no valida permisos. */
+    private final EliminarDron eliminadorReal = new EliminadorDron(droneDAO);
+
+    /**
+     * Elimina un dron aplicando el patron Proxy.
+     * <p>
+     * El servicio nunca llama directamente a {@link EliminadorDron}: crea
+     * un {@link DronProxy} con la clave capturada en la ventana emergente
+     * y le pide la eliminacion. Si la clave es incorrecta, el proxy corta
+     * la peticion y la base de datos jamas se toca.
+     *
+     * @param drone      dron seleccionado en la tabla
+     * @param contrasena clave digitada por el usuario
+     * @throws DronValidacionException si no hay drone seleccionado
+     * @throws co.edu.poli.sw2.exception.ClaveIncorrectaException si la clave no es valida
+     */
+    public void eliminarConClave(Drone drone, String contrasena) {
+        if (drone == null) {
+            throw new DronValidacionException("Selecciona un drone de la tabla para eliminar.");
+        }
+        EliminarDron proxy = new DronProxy(eliminadorReal, contrasena);
+        proxy.eliminarDron(drone.getId());
     }
 }
 

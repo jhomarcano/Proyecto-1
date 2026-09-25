@@ -15,6 +15,7 @@ import co.edu.poli.sw2.service.decorator.Componente;
 import co.edu.poli.sw2.service.Composite.Sensorcomposite;
 import co.edu.poli.sw2.service.Composite.Sensorcompositedemo;
 import co.edu.poli.sw2.service.facade.PatronesFacade;
+import java.util.Optional;
 
 import co.edu.poli.sw2.modelo.Mision;
 
@@ -323,10 +324,11 @@ public class DroneController implements Initializable {
     }
 
     /**
-     * Elimina el dron seleccionado en la tabla.
+     * Elimina el dron seleccionado aplicando el patron Proxy.
      * <p>
-     * Si no hay ninguna fila seleccionada, avisa al usuario sin llamar
-     * al servicio.
+     * Abre una ventana emergente que pide la contrasena de administrador
+     * y entrega esa clave al proxy. El controlador nunca decide si la
+     * clave es correcta: esa responsabilidad es del proxy.
      */
     @FXML
     private void eliminarDrone() {
@@ -335,11 +337,21 @@ public class DroneController implements Initializable {
             mostrarMensaje("Selecciona un drone de la tabla para eliminar.", true);
             return;
         }
+
+        Optional<String> clave = VentanaClaveEliminacion.pedirClave(
+                seleccionado.getSerial(),
+                tablaDrones.getScene().getWindow());
+
+        if (clave.isEmpty()) {
+            mostrarMensaje("Eliminacion cancelada por el usuario.", false);
+            return;
+        }
+
         try {
-            droneService.eliminar(seleccionado);
+            droneService.eliminarConClave(seleccionado, clave.get());
             refrescarTabla();
             limpiarFormulario();
-            mostrarMensaje("Drone eliminado correctamente.", false);
+            mostrarMensaje("Drone eliminado correctamente (autorizado por Proxy).", false);
         } catch (DronException ex) {
             mostrarMensaje(ex.getMessage(), true);
             ManejadorErroresUI.mostrar(ex);
